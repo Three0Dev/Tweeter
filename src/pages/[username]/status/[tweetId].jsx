@@ -5,9 +5,8 @@ import Comments from "../../../components/Comments/Comments";
 import Post from "../../../components/Post/Post";
 import Suggestions from "../../../components/Suggestions/Suggestions";
 import UserContext from "../../../context/UserContext";
-import firebase from "../../../firebase/init";
 import Layout from "../../../layouts";
-import { fetchUser } from "../../../services/FetchData";
+import { fetchTweet, fetchUser } from "../../../services/FetchData";
 
 const Tweet = ({ tweet }) => {
   const { user } = useContext(UserContext);
@@ -39,24 +38,13 @@ const Tweet = ({ tweet }) => {
 
 export async function getServerSideProps(context) {
   const tweetID = context.params.tweetId;
-  const res = await firebase
-    .firestore()
-    .collection("tweets")
-    .doc(tweetID)
-    .get();
-  const tweet = res.data();
-  const id = res.id;
+  const tweet = await fetchTweet(tweetID);
   const user = await fetchUser({ userID: tweet.authorId });
 
   return {
     props: {
-      tweet: {
-        ...tweet,
-        createdAt: tweet.createdAt.toDate().toString(),
-        id,
-        author: user,
-      },
-    },
+     tweet
+    }
   };
 }
 

@@ -11,6 +11,7 @@ const postTweet = async (
     // TODO TWEET ADDRESS
   )
   await db.put({
+    _id: Three0.DB.create_UUID(),
     authorId,
     text,
     parentTweet,
