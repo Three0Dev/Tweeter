@@ -1,31 +1,26 @@
-import firebase from "../firebase/init";
+import Three0 from "../three0";
 
-const db = firebase.firestore();
+let db = Three0.DB.orbitdb;
 
 export const fetchUser = async ({ username, userID }) => {
-  let userQuerySnapShot;
+  let userQuerySnapShot = await db
+  .docs(
+    // TODO USER ADDRESS
+  )
 
   if (username) {
-    userQuerySnapShot = await db
-      .collection("users")
-      .where("username", "==", username)
-      .get();
-    if (userQuerySnapShot.empty) {
+    let userSnapshot = userQuerySnapShot.query(doc => doc.username === username);
+
+    if (userSnapshot.length == 0) {
       return null;
     }
-    return {
-      ...userQuerySnapShot.docs[0].data(),
-      uid: userQuerySnapShot.docs[0].id,
-    };
+    return userQuerySnapShot.docs[0];
   }
 
   if (userID) {
-    userQuerySnapShot = await db.collection("users").doc(userID).get();
-    if (userQuerySnapShot.exists) {
-      return {
-        ...userQuerySnapShot.data(),
-        uid: userQuerySnapShot.id,
-      };
+    let userDoc = userQuerySnapShot.get(userID);
+    if (userQuerySnapShot.length != 0) {
+      return userDoc[0];
     } else {
       return null;
     }
@@ -33,20 +28,18 @@ export const fetchUser = async ({ username, userID }) => {
 };
 
 export const fetchUserTweets = async (userID) => {
-  const tweetsQuerySnapShot = await db
-    .collection("tweets")
-    .where("authorId", "==", userID)
-    .where("parentTweet", "==", null)
-    .get();
+  const tweetsQuerySnapShot = (await db
+    .docs(
+      // TODO TWEET ADDRESS
+    )).query(doc => doc.authorId == userID && doc.parentTweet == null);
 
   const fetchedUser = await fetchUser({ userID });
 
   // tweets = tweets Array of  Objects
   const tweets = tweetsQuerySnapShot.docs.map((tweet) => {
-    const data = tweet.data();
+    const data = tweet;
 
     return {
-      id: tweet.id,
       ...data,
       author: fetchedUser,
       createdAt: data.createdAt.toDate().toString(),
@@ -57,50 +50,46 @@ export const fetchUserTweets = async (userID) => {
 };
 
 export const fetchTweet = async (tweetID) => {
-  const tweet = await firebase
-    .firestore()
-    .collection("tweets")
-    .doc(tweetID)
-    .get();
+  const tweetRef = (await db
+    .docs(
+      // TODO TWEET ADDRESS
+    )).get(tweetID);
 
-  if (!tweet.exists) return null;
-  const user = await fetchUser({ userID: tweet.data().authorId });
+
+  if (tweetRef.length == 0) return null;
+
+  const tweet = tweetRef[0];
+  const user = await fetchUser({ userID: tweet.authorId });
   return {
-    ...tweet.data(),
+    ...tweet,
     author: user,
     id: tweetID,
-    createdAt: tweet.data().createdAt.toDate().toString(),
+    createdAt: tweet.createdAt.toDate().toString(),
   };
 };
 
 export const fetchUserFollowers = async (userID) => {
-  return await db
-    .collection("connections")
-    .where("followeeID", "==", userID)
-    .get();
+  return (await db.docs(
+    // TODO CONNECTIONS ADDRESS
+  )).query(doc => doc.followeeID == userID);
 };
 
 export const fetchUserFollowings = async (userID) => {
-  return await db
-    .collection("connections")
-    .where("followerID", "==", userID)
-    .get();
+  return (await db.docs(
+    // TODO CONNECTIONS ADDRESS
+  )).query(doc => doc.followerID == userID);
 };
 
-export const fetchTweetLikes = (tweetID) => {
-  return firebase
-    .firestore()
-    .collection("likes")
-    .where("tweetID", "==", tweetID)
-    .get();
+export const fetchTweetLikes = async (tweetID) => {
+  return (await db.docs(
+    // TODO TWEETS ADDRESS
+  )).query(doc => doc.tweetID == tweetID);
 };
 
 export const fetchTweetSaves = (tweetID) => {
-  return firebase
-    .firestore()
-    .collection("saves")
-    .where("tweetID", "==", tweetID)
-    .get();
+  return (await db.docs(
+    // TODO SAVES ADDRESS
+  )).query(doc => doc.tweetID == tweetID);
 };
 
 const fetchAllUserData = async (username) => {
