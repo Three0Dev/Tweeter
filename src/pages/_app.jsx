@@ -4,11 +4,10 @@ import BookmarksTweetsContext from "../context/BookmarksTweetsContext";
 import ExploreTweetsContext from "../context/ExploreTweetsContext";
 import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
-import firebase from "../firebase/init";
 import "../styles/global.css";
 import "../styles/reset.css";
+import Three0 from '../three0';
 
-const db = firebase.firestore();
 
 function MyApp({ Component, pageProps }) {
   const Router = useRouter();
@@ -20,19 +19,14 @@ function MyApp({ Component, pageProps }) {
   const [bookmarksTweetsContext, setBookmarksTweetsContext] = useState(null);
 
   useEffect(() => {
-    async function getCurrentUser(userID) {
-      const user = await db.collection("users").doc(userID).get();
-      setUser({ ...user.data(), uid: userID });
+    if (!Three0.AUTH.isLoggedIn()) {
+      if (protectedRoutes.includes(Router.pathname)) Router.push("/");
+      setUser(null);
+    } else {
+      Three0.DB.get("").then(db => Three0.DB.fetchDB(db)).then(data => {
+        setUser({ ...data, uid: Three0.AUTH.getAccountId() });
+      })
     }
-
-    firebase.auth().onAuthStateChanged((loggedUser) => {
-      if (!loggedUser) {
-        if (protectedRoutes.includes(Router.pathname)) Router.push("/");
-        setUser(null);
-      } else {
-        getCurrentUser(loggedUser.uid);
-      }
-    });
   }, []);
 
   return (

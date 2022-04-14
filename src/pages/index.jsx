@@ -17,7 +17,7 @@ const Home = () => {
               <img src="/images/logos/tweeter-light.svg" alt="logo" />
             </div>
             <div className="m-auto">
-              <AuthForm type="signIn" />
+              <AuthForm />
             </div>
           </div>
         </div>

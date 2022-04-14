@@ -39,10 +39,4 @@ export const deleteAccount = async (userID) => {
         .then(console.log("Deleted Connections"))
         .catch((e) => console.log(e));
     });
-
-  firebase
-    .auth()
-    .currentUser.delete()
-    .then(() => console.log("Deleted user from auth"))
-    .catch((e) => console.log(e));
 };
