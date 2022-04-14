@@ -23,7 +23,9 @@ function MyApp({ Component, pageProps }) {
       if (protectedRoutes.includes(Router.pathname)) Router.push("/");
       setUser(null);
     } else {
-      Three0.DB.get("").then(db => Three0.DB.fetchDB(db)).then(data => {
+      Three0.DB.get(
+        // TODO USERS COLLECTION
+      ).then(db => Three0.DB.fetchDB(db)).then(data => {
         setUser({ ...data, uid: Three0.AUTH.getAccountId() });
       })
     }

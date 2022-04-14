@@ -1,4 +1,4 @@
-import firebase from "../firebase/init";
+import Three0 from "../three0";
 
 const postTweet = async (
   authorId,
@@ -7,12 +7,15 @@ const postTweet = async (
   parentTweet = null
 ) => {
   console.log(authorId, text, imgLink, parentTweet);
-  await firebase.firestore().collection("tweets").add({
+  let db = Three0.DB.orbitdb.docs(
+    // TODO TWEET ADDRESS
+  )
+  await db.put({
     authorId,
     text,
     parentTweet,
     imgLink,
-    createdAt: firebase.firestore.Timestamp.now(),
+    createdAt: (new Date()).getTime(),
   });
 };
 
