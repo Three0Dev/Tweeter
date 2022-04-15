@@ -94,7 +94,7 @@ export const fetchTweetLikes = async (tweetID) => {
   )).query(doc => doc._id == tweetID);
 };
 
-export const fetchTweetSaves = (tweetID) => {
+export const fetchTweetSaves = async (tweetID) => {
   return (await db.docs(
     // TODO SAVES ADDRESS
   )).query(doc => doc._id == tweetID);

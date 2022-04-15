@@ -1,7 +1,7 @@
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import firebase from "../../firebase/init";
+import Three0 from "../../three0";
 
 const FollowButton = ({ userID }) => {
   const { user } = useContext(UserContext);
@@ -13,39 +13,57 @@ const FollowButton = ({ userID }) => {
       alert("You need to sign in for that");
       return;
     }
-    const { id } = firebase.firestore().collection("connections").add({
-      followerID: user.uid,
-      followeeID: userID,
+
+    let id = Three0.DB.create_UUID();
+
+    Three0.DB.orbitdb.docs(
+      // TODO CONNECTIONS COLLECTION
+    ).then(connectionsCollection => {
+      connectionsCollection.put({
+        _id: id,
+        followerID: user.uid,
+        followeeID: userID,
+      }).then(() => {
+        setIsFollowing(true);
+        setFollowingDocID(id);
+      }).catch(err => {
+        console.log(err);
+      });
+    }).catch(err => {
+      console.log(err);
     });
-    setFollowingDocID(id);
-    setIsFollowing(true);
-  };
+  }
 
   const stopFollowing = () => {
     if (!user) {
       alert("You need to sign in for that");
       return;
     }
-    firebase
-      .firestore()
-      .collection("connections")
-      .doc(connectionDocID)
-      .delete();
-    setIsFollowing(false);
+
+    Three0.DB.orbitdb.docs(
+      // TODO CONNECTIONS COLLECTION
+    ).then(connectionsCollection => {
+      connectionsCollection.del(connectionDocID).then(() => {
+        setIsFollowing(false);
+      }).catch(err => {
+        console.log(err);
+      });
+    }).catch(err => {
+      console.log(err);
+    });
+
   };
 
   useEffect(() => {
     if (user) {
       async function checkFollowing() {
-        const result = await firebase
-          .firestore()
-          .collection("connections")
-          .where("followeeID", "==", userID)
-          .where("followerID", "==", user.uid)
-          .get();
-        if (result.size === 1) {
+        const result = (await Three0.DB.orbitdb.docs(
+          // TODO CONNECTIONS COLLECTION
+        )).query(doc => doc.followeeID == userID && doc.followerID == user.uid);
+          
+        if (result.length === 1) {
           setIsFollowing(true);
-          setFollowingDocID(result.docs[0].id);
+          setFollowingDocID(result[0]._id);
         }
       }
       checkFollowing();

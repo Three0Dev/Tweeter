@@ -6,7 +6,7 @@ import Filters from "../components/Filters/Filters";
 import Post from "../components/Post/Post";
 import BookmarksTweetsContext from "../context/BookmarksTweetsContext";
 import UserContext from "../context/UserContext";
-import firebase from "../firebase/init";
+import Three0 from '../three0';
 import Layout from "../layouts";
 import { fetchTweet } from "../services/FetchData";
 
@@ -24,20 +24,18 @@ const Bookmarks = () => {
       if (!bookmarksTweetsContext) {
         async function getSavedTweets() {
           const localBMTweets = [];
-          const savesSnapShot = await firebase
-            .firestore()
-            .collection("saves")
-            .where("userID", "==", user.uid)
-            .get();
+          const savesSnapShot = (await Three0.DB.orbitdb.docs(
+            // TODO SAVES COLLECTION
+          )).query(doc => doc.userID === user.uid);
 
-          if (savesSnapShot.empty) {
+          if (savesSnapShot.length == 0) {
             setIsEmpty(true);
             setBookmarkTweets([]);
             setIsLoading(false);
           } else {
-            for (let i = 0; i < savesSnapShot.size; i++) {
+            for (let i = 0; i < savesSnapShot.length; i++) {
               const tweet = await fetchTweet(
-                savesSnapShot.docs[i].data().tweetID
+                savesSnapShot[i].tweetID
               );
               localBMTweets.push(tweet);
             }

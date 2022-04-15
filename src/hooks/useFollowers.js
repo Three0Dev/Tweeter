@@ -12,10 +12,10 @@ export function useFollowers(userId, authUserID) {
     setIsFollowersLoading(true);
     if (user) {
       const followersSnapShot = await fetchUserFollowers(userId, authUserID);
-      for (let i = 0; i < followersSnapShot.size; i++) {
+      for (let i = 0; i < followersSnapShot.length; i++) {
         data.push(
           await fetchUser({
-            userID: followersSnapShot.docs[i].data().followerID,
+            userID: followersSnapShot[i].followerID,
           })
         );
       }

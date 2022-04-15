@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import firebase from "../../firebase/init";
+import Three0 from "../../three0";
 import { fetchUser } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
 
@@ -9,30 +9,27 @@ const Comments = ({ tweetID }) => {
   useEffect(() => {
     const getComments = async () => {
       try {
-        firebase
-          .firestore()
-          .collection("tweets")
-          .where("parentTweet", "==", tweetID)
-          .onSnapshot(async (tweetsRef) => {
-            const localComments = [];
+        let tweets = (await Three0.DB.orbitdb.docs(
+          // TODO TWEETS COLLECTION
+        )).query(doc => doc.parentTweetID === tweetID);
+        
+        const localComments = [];
 
-            for (let i = 0; i < tweetsRef.size; i++) {
-              const tweet = tweetsRef.docs[i].data({
-                serverTimestamps: "estimate",
-              });
-              const id = tweetsRef.docs[i].id;
-              const userInfo = await fetchUser({
-                userID: tweet.authorId,
-              });
-              localComments.push({
-                ...tweet,
-                id,
-                createdAt: tweet.createdAt.toDate().toString(),
-                author: userInfo,
-              });
-            }
-            setComments(localComments);
+        for (let i = 0; i < tweets.length; i++) {
+          const tweet = tweets[i];
+          const id = tweet._id;
+          const userInfo = await fetchUser({
+            userID: tweet.authorId,
           });
+          localComments.push({
+            ...tweet,
+            id,
+            createdAt: tweet.createdAt.toDate().toString(),
+            author: userInfo,
+          });
+        }
+        setComments(localComments);
+
       } catch (err) {
         console.log(err);
       }

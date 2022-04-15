@@ -1,26 +1,13 @@
 import CircularProgress from "@material-ui/core/CircularProgress";
-import PhotoIcon from "@material-ui/icons/Photo";
 import React, { useContext, useState } from "react";
 import UserContext from "../../context/UserContext";
-import firebase from "../../firebase/init";
 import postTweet from "../../services/PostTweet";
 import Avatar from "../Avatar/Avatar";
 
 const TweetInput = () => {
   const { user } = useContext(UserContext);
   const [tweet, setTweet] = useState("");
-  const [imgLink, setImgLink] = useState(null);
-  const [file, setFile] = useState(null);
   const [tweeting, setTweeting] = useState(false);
-
-  const fileInputRef = React.createRef();
-
-  const uploadFile = async () => {
-    const storageRef = firebase.storage().ref("tweets/" + file.name);
-    const task = await storageRef.put(file);
-    const link = await storageRef.getDownloadURL("tweets/" + file.name);
-    return link;
-  };
 
   return (
     <div className=" bg-white rounded-lg h-auto overflow-hidden ">
@@ -35,19 +22,13 @@ const TweetInput = () => {
               <form
                 onSubmit={async (e) => {
                   e.preventDefault();
-                  async function postTweetandUploadFile() {
+                  async function postTweetHandler() {
                     setTweeting(true);
-                    let imgLink = null;
-                    if (file) {
-                      imgLink = await uploadFile();
-                    }
-                    await postTweet(user.uid, tweet.trim(), imgLink);
+                    await postTweet(user.uid, tweet.trim());
                     setTweeting(false);
-                    setFile(null);
                     setTweet("");
-                    setImgLink(null);
                   }
-                  postTweetandUploadFile();
+                  postTweetHandler();
                 }}>
                 <textarea
                   className="w-full h-16 font-noto font-medium text-base text-gray-500"
@@ -58,21 +39,6 @@ const TweetInput = () => {
                   onChange={(e) => setTweet(e.target.value)}
                   required></textarea>
                 <div className="flex items-center mt-3">
-                  <div className="mx-2">
-                    <input
-                      type="file"
-                      hidden
-                      onChange={(e) => setFile(e.target.files[0])}
-                      ref={fileInputRef}
-                    />
-                    <span className="hover:bg-gray-200 p-2 cursor-pointer">
-                      <PhotoIcon
-                        onClick={() => fileInputRef.current.click()}
-                        style={{ color: "#3182ce" }}
-                      />
-                    </span>
-                      {file && file.name}
-                  </div>
                   <div className="mr-0 ml-auto">
                     <button
                       className={`bottom-0 relative text-white px-8 py-4 rounded-md ${

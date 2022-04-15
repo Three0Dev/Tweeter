@@ -9,10 +9,10 @@ export function useFollowings(userId) {
     const data = [];
     setIsFollowingsLoading(true);
     const followersSnapShot = await fetchUserFollowings(userId);
-    for (let i = 0; i < followersSnapShot.size; i++) {
+    for (let i = 0; i < followersSnapShot.length; i++) {
       data.push(
         await fetchUser({
-          userID: followersSnapShot.docs[i].data().followeeID,
+          userID: followersSnapShot[i].followeeID,
         })
       );
     }

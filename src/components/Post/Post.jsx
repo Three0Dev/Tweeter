@@ -7,12 +7,14 @@ import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import firebase from "../../firebase/init";
+import Three0 from "../../three0";
 import { deleteTweet } from "../../services/DeleteTweet";
 import { fetchTweetLikes, fetchTweetSaves } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
 
 const Post = ({ tweet }) => {
+  let db = Three0.DB.orbitdb;
+
   const { user } = useContext(UserContext);
   const [localTweet, setLocalTweet] = useState(tweet);
 
@@ -33,10 +35,19 @@ const Post = ({ tweet }) => {
       alert("You need to sign in for that");
       return;
     }
-    const { id } = await firebase.firestore().collection("likes").add({
+
+    const likesCollection = await db.docs(
+      // TODO LIKES COLLECTION
+    );
+
+    const id = Three0.DB.create_UUID();
+
+    await likesCollection.put({
+      _id: id,
       userID: user.uid,
       tweetID: tweet.id,
     });
+
     setLikes((prev) => prev + 1);
     setLikeDocID(id);
     setIsLiked(true);
@@ -47,9 +58,15 @@ const Post = ({ tweet }) => {
       alert("You need to sign in for that");
       return;
     }
-    firebase.firestore().collection("likes").doc(likeDocID).delete();
-    setLikes((prev) => prev - 1);
-    setIsLiked(false);
+
+    db.docs(
+      // TODO LIKES COLLECTION
+    ).then(likesCollection => {
+      likesCollection.del(likeDocID).then(() => {
+        setLikes((prev) => prev - 1);
+        setIsLiked(false);
+      });
+    })
   };
 
   const saveTweets = () => {
@@ -57,13 +74,22 @@ const Post = ({ tweet }) => {
       alert("You need to sign in for that");
       return;
     }
-    const { id } = firebase.firestore().collection("saves").add({
-      tweetID: tweet.id,
-      userID: user.uid,
+
+    let id = Three0.DB.create_UUID();
+
+     db.docs(
+      // TODO SAVES COLLECTION
+    ).then(savesCollection => {
+      savesCollection.put({
+        _id: id,
+        tweetID: tweet.id,
+        userID: user.uid,
+      }).then(() => {
+        setSaves((prev) => prev + 1);
+        setSaveDocID(id);
+        setIsSaved(true);
+      });
     });
-    setSaves((prev) => prev + 1);
-    setSaveDocID(id);
-    setIsSaved(true);
   };
 
   const unsaveTweets = () => {
@@ -71,56 +97,63 @@ const Post = ({ tweet }) => {
       alert("You need to sign in for that");
       return;
     }
-    firebase.firestore().collection("saves").doc(saveDocID).delete();
-    setSaves((prev) => prev - 1);
-    setIsSaved(false);
+
+    db.docs(
+      // TODO SAVES COLLECTION
+    ).then(savesCollection => {
+      savesCollection.del(
+        saveDocID
+      ).then(() => {
+        setSaves((prev) => prev - 1);
+        setIsSaved(false);
+      });
+    });
   };
 
   useEffect(async () => {
-    setLikes((await fetchTweetLikes(localTweet.id)).size);
+    setLikes((await fetchTweetLikes(localTweet.id)).length);
     if (user) {
+      function isValidTweet(myTweet) {
+        return myTweet.userID === user.uid && tweet.tweetID === myTweet.tweetID;
+      }
+
       async function checkForLikes() {
-        const docs = await firebase
-          .firestore()
-          .collection("likes")
-          .where("userID", "==", user.uid)
-          .where("tweetID", "==", tweet.id)
-          .get();
-        if (docs.size === 1) {
+        const docs = (await db.docs(
+          // TODO LIKES COLLECTION
+        )).query(isValidTweet);
+
+        if (docs.length === 1) {
           setIsLiked(true);
-          setLikeDocID(docs.docs[0].id);
+          setLikeDocID(docs[0]._id);
         }
       }
       checkForLikes();
 
       async function checkForSaves() {
-        const docs = await firebase
-          .firestore()
-          .collection("saves")
-          .where("userID", "==", user.uid)
-          .where("tweetID", "==", tweet.id)
-          .get();
-        if (docs.size === 1) {
+        const docs = (await db.dosc(
+          // TODO SAVES COLLECTION
+        )).query(isValidTweet);
+
+        if (docs.length === 1) {
           setIsSaved(true);
-          setSaveDocID(docs.docs[0].id);
+          setSaveDocID(docs[0]._id);
         }
       }
       checkForSaves();
 
       async function getCommentsCount() {
-        const res = await firebase
-          .firestore()
-          .collection("tweets")
-          .where("parentTweet", "==", tweet.id)
-          .get();
-        setComments(res.size);
+        const res = (await db.docs(
+          // TODO TWEETS COLLECTION
+        )).query(doc => doc.parentTweet == tweet.id);
+        setComments(res.length);
       }
+
       getCommentsCount();
       if (user.uid === tweet.author.uid) {
         setMyTweet(true);
       }
     }
-    setSaves((await fetchTweetSaves(localTweet.id)).size);
+    setSaves((await fetchTweetSaves(localTweet.id)).length);
   }, []);
 
   return (

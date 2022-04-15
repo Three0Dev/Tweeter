@@ -8,7 +8,7 @@ import Trends from "../components/Trends/Trends";
 import TweetInput from "../components/TweetInput/TweetInput";
 import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
-import firebase from "../firebase/init";
+import Three0 from '../three0';
 import Layout from "../layouts";
 import { fetchUser } from "../services/FetchData";
 
@@ -17,6 +17,8 @@ const Home = () => {
   const [homeTweets, setHomeTweets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEmpty, setIsEmpty] = useState(false);
+
+  const db = Three0.DB.orbitdb;
 
   const { homeTweetsContext, setHomeTweetsContext } = useContext(
     HomeTweetsContext
@@ -27,48 +29,41 @@ const Home = () => {
       if (user) {
         if (!homeTweetsContext) {
           setLoading(true);
-          const connectionsRef = await firebase
-            .firestore()
-            .collection("connections")
-            .where("followerID", "==", user.uid)
-            .get();
+          const connectionsRef = (await db.docs(
+            // TODO CONNECTIONS COLLECTION
+          )).query(doc => doc.followerID === user.uid);
 
-          if (connectionsRef.empty) {
+          if (connectionsRef.length == 0) {
             setIsEmpty(true);
             setHomeTweets([]);
             setLoading(false);
           } else {
-            const followerIDs = connectionsRef.docs.map((connection) => {
-              const floID = connection.data().followeeID;
-              return floID;
-            });
+            const followerIDs = connectionsRef.map((connection) => connection.followeeID);
 
-            firebase
-              .firestore()
-              .collection("tweets")
-              .where("authorId", "in", followerIDs)
-              .where("parentTweet", "==", null)
-              .orderBy("createdAt", "desc")
-              .onSnapshot(async (tweetRef) => {
-                const homeUserTweets = [];
+            let tweetRef = (await db.docs(
+              // TODO TWEETS COLLECTION
+            )).query(doc => {
+              return followerIDs.includes(doc.authorId) && doc.parentTweet == null;
+            }).sort((a, b) => b.createdAt - a.createdAt);
+             
+            const homeUserTweets = [];
 
-                for (let i = 0; i < tweetRef.size; i++) {
-                  const userInfo = await fetchUser({
-                    userID: tweetRef.docs[i].data().authorId,
-                  });
-                  let data = tweetRef.docs[i].data();
-
-                  homeUserTweets.push({
-                    ...data,
-                    createdAt: data.createdAt.toDate().toString(),
-                    id: tweetRef.docs[i].id,
-                    author: userInfo,
-                  });
-                }
-                setHomeTweets(homeUserTweets);
-                setLoading(false);
-                setHomeTweetsContext(homeUserTweets);
+            for (let i = 0; i < tweetRef.length; i++) {
+              const userInfo = await fetchUser({
+                userID: tweetRef[i].authorId,
               });
+              let data = tweetRef[i];
+
+              homeUserTweets.push({
+                ...data,
+                createdAt: data.createdAt.toDate().toString(),
+                id: tweetRef[i]._id,
+                author: userInfo,
+              });
+            }
+            setHomeTweets(homeUserTweets);
+            setLoading(false);
+            setHomeTweetsContext(homeUserTweets);
           }
         } else {
           setLoading(false);

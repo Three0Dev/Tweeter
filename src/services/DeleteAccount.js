@@ -1,42 +1,41 @@
-import firebase from "../firebase/init";
+import Three0 from '../three0';
+
 import { deleteTweet } from "./DeleteTweet";
 
-const db = firebase.firestore();
+let db = Three0.DB.orbitdb;
 
 export const deleteAccount = async (userID) => {
-  // Delete user from firebase authentication
-
   // Delete user doc from "users" collection
-  db.collection("users")
-    .doc(userID)
-    .delete()
+  let usersDB = await db.docs(
+    // TODO USERS ADDRESS  
+  );
+  
+  usersDB.del(userID)
     .then(console.log("Deleted User Doc"))
     .catch((e) => console.log(e));
 
   // Get all tweets that has authorID = user.uid in "tweets" collection
   const tweetsSnapShot = await db
-    .collection("tweets")
-    .where("authorId", "==", userID)
-    .get();
-  tweetsSnapShot.forEach((tweetsDoc) => {
+    .docs(
+      // TODO TWEETS ADDRESS
+    )
+    
+  tweetsSnapShot.query(doc => doc.authorID === userID)
+    .forEach((tweetsDoc) => {
     // Delete those tweets
-    deleteTweet(tweetsDoc.id);
+    deleteTweet(tweetsDoc._id);
   });
 
   // Delete all connections
-  await db
-    .collection("connections")
-    .where("followerID", "==", userID)
-    .where("followeeID", "==", userID)
-    .get()
-    .then((connectionsSnapShot) => {
-      const batch = firebase.firestore().batch();
-      connectionsSnapShot.forEach((connectionDocRef) => {
-        batch.delete(connectionDocRef.ref);
-      });
-      batch
-        .commit()
-        .then(console.log("Deleted Connections"))
-        .catch((e) => console.log(e));
-    });
+  let connectionList = [];
+  let connectionsCollection = await db
+    .docs(
+     // TODO CONNECTION ADDRESS
+    )
+    
+  connectionsCollection.query(doc => doc.followerID === userID || doc.followeeID === userID)
+    .forEach((connectionDoc) => 
+      connectionList.push(connectionsCollection.del(connectionDoc._id)))
+  
+  Promise.all(connectionList).then(() => console.log("Deleted Connections")).catch((e) => console.log(e));
 };

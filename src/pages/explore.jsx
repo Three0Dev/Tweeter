@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import ExploreFilters from "../components/ExploreFIlters/ExploreFilters";
 import Post from "../components/Post/Post";
 import ExploreTweetsContext from "../context/ExploreTweetsContext";
-import firebase from "../firebase/init";
+import Three0 from '../three0';
 import Layout from "../layouts";
 import { fetchUser } from "../services/FetchData";
 
@@ -17,29 +17,28 @@ const Explore = () => {
 
   useEffect(async () => {
     if (!exploreTweetsContext) {
-      firebase
-        .firestore()
-        .collection("tweets")
-        .limit(5)
-        .onSnapshot(async (tweetRef) => {
-          const exploreUserTweets = [];
+      let tweetRef = await Three0.DB.orbitdb.docs(
+        // TODO TWEETS COLLECTION
+      ).query(true);
+      
+      const exploreUserTweets = [];
 
-          for (let i = 0; i < tweetRef.size; i++) {
-            const userInfo = await fetchUser({
-              userID: tweetRef.docs[i].data().authorId,
-            });
-            let data = tweetRef.docs[i].data();
-
-            exploreUserTweets.push({
-              ...data,
-              createdAt: data.createdAt.toDate().toString(),
-              id: tweetRef.docs[i].id,
-              author: userInfo,
-            });
-          }
-          setExploreTweets(exploreUserTweets);
-          setExploreTweetsContext(exploreUserTweets);
+      for (let i = 0; i < tweetRef.size; i++) {
+        const userInfo = await fetchUser({
+          userID: tweetRef[i].authorId,
         });
+        let data = tweetRef[i];
+
+        exploreUserTweets.push({
+          ...data,
+          createdAt: data.createdAt.toDate().toString(),
+          id: tweetRef[i]._id,
+          author: userInfo,
+        });
+      }
+      setExploreTweets(exploreUserTweets);
+      setExploreTweetsContext(exploreUserTweets);
+        
     } else {
       setExploreTweets(exploreTweetsContext);
     }
