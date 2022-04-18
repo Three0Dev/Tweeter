@@ -64,5 +64,6 @@ export function login(appName = "My Three0 App",successURL = window.location.hre
     // This works by creating a new access key for the user's account and storing
     // the private key in localStorage.
     window[CONTRACT_NAME] = false;
+    // console.log(successURL)
     window.walletConnection.requestSignIn(CONTRACT_NAME, appName, successURL, failureURL)
 }

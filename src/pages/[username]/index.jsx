@@ -7,14 +7,25 @@ import Filters from "../../components/Filters/Filters";
 import Post from "../../components/Post/Post";
 import UserInfo from "../../components/UserInfo/UserInfo";
 import fetchAllUserData from "../../services/FetchData";
+import {init} from '../../three0'
+import { useRouter } from 'next/router'
 
-const UserName = ({ fetchedUser, tweets }) => {
+const UserName = () => {
   const [userExits, setUserExits] = useState(false);
+  const [fetchedUser, setUser] = useState({});
+  const [tweets, setTweets] = useState([]);
+
+  const router = useRouter()
+  const { username } = router.query
 
   useEffect(() => {
-    if (fetchedUser) {
-      setUserExits(true);
-    }
+    init().then(() => {
+      fetchAllUserData(username).then(obj => {
+        setUserExits(!!obj);
+        setUser(obj.fetchedUser);
+        setTweets(obj.tweets);
+      });
+    });
   }, []);
 
   return (
@@ -68,14 +79,15 @@ const UserName = ({ fetchedUser, tweets }) => {
   );
 };
 
-export async function getServerSideProps(context) {
-  const userInfo = await fetchAllUserData(context.params.username);
+// export async function getServerSideProps(context) {
+//   await init();
+//   const userInfo = await fetchAllUserData(context.params.username);
 
-  return {
-    props: {
-      ...userInfo,
-    },
-  };
-}
+//   return {
+//     props: {
+//       ...userInfo,
+//     },
+//   };
+// }
 
 export default UserName;

@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CommentInput from "../../../components/CommentInput/CommentInput";
 import Comments from "../../../components/Comments/Comments";
 import Post from "../../../components/Post/Post";
@@ -7,9 +7,24 @@ import Suggestions from "../../../components/Suggestions/Suggestions";
 import UserContext from "../../../context/UserContext";
 import Layout from "../../../layouts";
 import { fetchTweet, fetchUser } from "../../../services/FetchData";
+import { useRouter } from 'next/router'
+import {init} from '../../../three0'
 
-const Tweet = ({ tweet }) => {
+const Tweet = () => {
   const { user } = useContext(UserContext);
+  const [tweet, setTweet] = useState({});
+
+  const router = useRouter()
+  const { tweetId } = router.query
+
+  useEffect(() => {
+    init().then(() => fetchTweet(tweetId).then(tweetObj => {
+      console.log(tweetObj)
+      setTweet(tweetObj)
+    }));
+  }, []);
+
+
 
   return (
     <div>
@@ -35,17 +50,5 @@ const Tweet = ({ tweet }) => {
     </div>
   );
 };
-
-export async function getServerSideProps(context) {
-  const tweetID = context.params.tweetId;
-  const tweet = await fetchTweet(tweetID);
-  const user = await fetchUser({ userID: tweet.authorId });
-
-  return {
-    props: {
-     tweet
-    }
-  };
-}
 
 export default Tweet;

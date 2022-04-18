@@ -35,8 +35,12 @@ class NearIdentityProvider extends IdentityProvider {
 // OrbitDB instance
 export let orbitdb
 
+let ipfs;
+
 export const initIPFS = async () => {
-    return await IPFS.create(IPFS_CONFIG.ipfs)
+    if(ipfs) return ipfs;
+    ipfs =  await IPFS.create(IPFS_CONFIG.ipfs);
+    return ipfs;
   }
   
   // Start OrbitDB
@@ -51,7 +55,10 @@ export const initOrbitDB = async (ipfs) => {
 export const get = async (address) => {
     let db
     if (orbitdb) {
-      db = await orbitdb.open(address)
+      db = await orbitdb.open(address, {
+        create: true,
+        type: 'docstore',
+      })
       await db.load()
     }
     return db

@@ -29,9 +29,14 @@ const Home = () => {
       if (user) {
         if (!homeTweetsContext) {
           setLoading(true);
-          const connectionsRef = (await db.docs(
+          let connectionsRef = await db.docs(
             // TODO CONNECTIONS COLLECTION
-          )).query(doc => doc.followerID === user.uid);
+            "three0.tweeterdemo.connections"
+          )
+          
+          // await connectionsRef.load();
+
+          connectionsRef = connectionsRef.query(doc => doc.followerID === user.uid);
 
           if (connectionsRef.length == 0) {
             setIsEmpty(true);
@@ -40,11 +45,18 @@ const Home = () => {
           } else {
             const followerIDs = connectionsRef.map((connection) => connection.followeeID);
 
-            let tweetRef = (await db.docs(
+            let tweetRef = await db.docs(
               // TODO TWEETS COLLECTION
-            )).query(doc => {
+              "three0.tweeterdemo.tweets"
+            )
+
+            await tweetRef.load();
+            
+            tweetRef = tweetRef.query(doc => {
               return followerIDs.includes(doc.authorId) && doc.parentTweet == null;
             }).sort((a, b) => b.createdAt - a.createdAt);
+
+            console.log(tweetRef);
              
             const homeUserTweets = [];
 
@@ -56,7 +68,7 @@ const Home = () => {
 
               homeUserTweets.push({
                 ...data,
-                createdAt: data.createdAt.toDate().toString(),
+                createdAt: (new Date(data.createdAt)).toString(),
                 id: tweetRef[i]._id,
                 author: userInfo,
               });
@@ -113,7 +125,7 @@ const Home = () => {
                 <Trends />
               </div>
               <div className="mb-5">
-                {user && <Suggestions userID="NpVRgALXkJSyA7sa4wVgKA6Adu03" />}
+                {user && <Suggestions userID={Three0.AUTH.getAccountId()} />}
               </div>
             </div>
           </div>

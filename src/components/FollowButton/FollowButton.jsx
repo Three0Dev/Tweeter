@@ -18,6 +18,7 @@ const FollowButton = ({ userID }) => {
 
     Three0.DB.orbitdb.docs(
       // TODO CONNECTIONS COLLECTION
+      "three0.tweeterdemo.connections"
     ).then(connectionsCollection => {
       connectionsCollection.put({
         _id: id,
@@ -42,6 +43,7 @@ const FollowButton = ({ userID }) => {
 
     Three0.DB.orbitdb.docs(
       // TODO CONNECTIONS COLLECTION
+      "three0.tweeterdemo.connections"
     ).then(connectionsCollection => {
       connectionsCollection.del(connectionDocID).then(() => {
         setIsFollowing(false);
@@ -59,6 +61,7 @@ const FollowButton = ({ userID }) => {
       async function checkFollowing() {
         const result = (await Three0.DB.orbitdb.docs(
           // TODO CONNECTIONS COLLECTION
+          "three0.tweeterdemo.connections"
         )).query(doc => doc.followeeID == userID && doc.followerID == user.uid);
           
         if (result.length === 1) {

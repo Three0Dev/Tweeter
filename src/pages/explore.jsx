@@ -19,7 +19,12 @@ const Explore = () => {
     if (!exploreTweetsContext) {
       let tweetRef = await Three0.DB.orbitdb.docs(
         // TODO TWEETS COLLECTION
-      ).query(true);
+        "three0.tweeterdemo.tweets"
+      )
+
+      await tweetRef.load();
+      
+      tweetRef = tweetRef.query(doc => doc.parentTweet == null);
       
       const exploreUserTweets = [];
 
@@ -31,7 +36,7 @@ const Explore = () => {
 
         exploreUserTweets.push({
           ...data,
-          createdAt: data.createdAt.toDate().toString(),
+          createdAt: (new Date(data.createdAt)).toString(),
           id: tweetRef[i]._id,
           author: userInfo,
         });
@@ -58,7 +63,7 @@ const Explore = () => {
               </div>
             </div>
             <div className="lg:col-span-2">
-              {exploreTweets && exploreTweets.length > 0 ? (
+              {exploreTweets ? (
                 exploreTweets.map((tweet) => (
                   <span key={tweet.id}>
                     <Link href={`${tweet.author.username}/status/${tweet.id}`}>

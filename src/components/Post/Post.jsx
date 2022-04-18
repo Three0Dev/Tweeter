@@ -38,6 +38,7 @@ const Post = ({ tweet }) => {
 
     const likesCollection = await db.docs(
       // TODO LIKES COLLECTION
+      "three0.tweeterdemo.likes"
     );
 
     const id = Three0.DB.create_UUID();
@@ -61,6 +62,7 @@ const Post = ({ tweet }) => {
 
     db.docs(
       // TODO LIKES COLLECTION
+      "three0.tweeterdemo.likes"
     ).then(likesCollection => {
       likesCollection.del(likeDocID).then(() => {
         setLikes((prev) => prev - 1);
@@ -79,6 +81,7 @@ const Post = ({ tweet }) => {
 
      db.docs(
       // TODO SAVES COLLECTION
+      "three0.tweeterdemo.saves"
     ).then(savesCollection => {
       savesCollection.put({
         _id: id,
@@ -100,6 +103,7 @@ const Post = ({ tweet }) => {
 
     db.docs(
       // TODO SAVES COLLECTION
+      "three0.tweeterdemo.saves"
     ).then(savesCollection => {
       savesCollection.del(
         saveDocID
@@ -113,14 +117,19 @@ const Post = ({ tweet }) => {
   useEffect(async () => {
     setLikes((await fetchTweetLikes(localTweet.id)).length);
     if (user) {
-      function isValidTweet(myTweet) {
-        return myTweet.userID === user.uid && tweet.tweetID === myTweet.tweetID;
+      function isValidTweet(tweetComp) {
+        return tweetComp.userID == user.uid && tweet.id == tweetComp.tweetID;
       }
 
       async function checkForLikes() {
-        const docs = (await db.docs(
+        let docs = await db.docs(
           // TODO LIKES COLLECTION
-        )).query(isValidTweet);
+          "three0.tweeterdemo.likes"
+        )
+
+        await docs.load();
+        
+        docs = docs.query(isValidTweet);
 
         if (docs.length === 1) {
           setIsLiked(true);
@@ -130,9 +139,14 @@ const Post = ({ tweet }) => {
       checkForLikes();
 
       async function checkForSaves() {
-        const docs = (await db.dosc(
-          // TODO SAVES COLLECTION
-        )).query(isValidTweet);
+        let docs = await db.docs(
+         // TODO SAVES COLLECTION
+         "three0.tweeterdemo.saves"
+        )
+
+        await docs.load();
+        
+        docs = docs.query(isValidTweet);
 
         if (docs.length === 1) {
           setIsSaved(true);
@@ -142,9 +156,14 @@ const Post = ({ tweet }) => {
       checkForSaves();
 
       async function getCommentsCount() {
-        const res = (await db.docs(
+        let res = await db.docs(
           // TODO TWEETS COLLECTION
-        )).query(doc => doc.parentTweet == tweet.id);
+          "three0.tweeterdemo.tweets"
+        )
+        
+        await res.load();
+
+        res = res.query(doc => doc.parentTweet == tweet.id);
         setComments(res.length);
       }
 

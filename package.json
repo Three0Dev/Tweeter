@@ -19,7 +19,7 @@
     "ipfs-core": "^0.14.2",
     "js-sha256": "^0.9.0",
     "near-api-js": "^0.44.2",
-    "next": "10.0.2",
+    "next": "^12.1.5",
     "orbit-db": "^0.28.3",
     "orbit-db-identity-provider": "^0.4.0",
     "react": "17.0.1",

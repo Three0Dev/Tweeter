@@ -1,15 +1,16 @@
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { handleSignIn } from "../../services/Authentication";
+import { useState } from "react";
 
 const AuthForm = () => {
+  const [authLoading, setAuthLoading] = useState(false);
   const Auth = () => (
     <div>
       <form
         onSubmit={async (e) => {
           e.preventDefault();
           setAuthLoading(true);
-          const { message } = await handleSignIn();
-          setAuthErrMsg(message);
+          handleSignIn();
           setAuthLoading(false);
         }}>
         <div className="flex flex-row flex-wrap items-center">

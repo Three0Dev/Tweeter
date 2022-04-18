@@ -5,6 +5,8 @@ const config = {
     "projectId": "project_0"
 };
 
-(async () => await Three0.init(config))();
+export async function init() {
+    await Three0.init(config);
+};
 
 export default Three0;

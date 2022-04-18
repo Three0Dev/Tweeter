@@ -16,7 +16,7 @@ const Suggestions = ({ type, userID }) => {
         userID,
       });
       const followersCount = await fetchUserFollowers(localUser.uid);
-      setUser({ ...localUser, followersCount: followersCount.size });
+      setUser({ ...localUser, followersCount: followersCount.length });
       setLoading(false);
     }
   }, [authUser]);

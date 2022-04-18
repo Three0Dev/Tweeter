@@ -24,9 +24,14 @@ const Bookmarks = () => {
       if (!bookmarksTweetsContext) {
         async function getSavedTweets() {
           const localBMTweets = [];
-          const savesSnapShot = (await Three0.DB.orbitdb.docs(
+          let savesSnapShot = await Three0.DB.orbitdb.docs(
             // TODO SAVES COLLECTION
-          )).query(doc => doc.userID === user.uid);
+            "three0.tweeterdemo.saves"
+          )
+
+          await savesSnapShot.load();
+          
+          savesSnapShot = savesSnapShot.query(doc => doc.userID === user.uid);
 
           if (savesSnapShot.length == 0) {
             setIsEmpty(true);

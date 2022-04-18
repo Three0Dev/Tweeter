@@ -2,12 +2,14 @@ import Three0 from '../three0';
 
 import { deleteTweet } from "./DeleteTweet";
 
-let db = Three0.DB.orbitdb;
 
 export const deleteAccount = async (userID) => {
+  let db = Three0.DB.orbitdb;
+
   // Delete user doc from "users" collection
   let usersDB = await db.docs(
-    // TODO USERS ADDRESS  
+    // TODO USERS COLLECTION  
+    "three0.tweeterdemo.users"
   );
   
   usersDB.del(userID)
@@ -17,7 +19,8 @@ export const deleteAccount = async (userID) => {
   // Get all tweets that has authorID = user.uid in "tweets" collection
   const tweetsSnapShot = await db
     .docs(
-      // TODO TWEETS ADDRESS
+      // TODO TWEETS COLLECTION
+      "three0.tweeterdemo.tweets"
     )
     
   tweetsSnapShot.query(doc => doc.authorID === userID)
@@ -30,7 +33,8 @@ export const deleteAccount = async (userID) => {
   let connectionList = [];
   let connectionsCollection = await db
     .docs(
-     // TODO CONNECTION ADDRESS
+     // TODO CONNECTION COLLECTION
+     "three0.tweeterdemo.connections"
     )
     
   connectionsCollection.query(doc => doc.followerID === userID || doc.followeeID === userID)

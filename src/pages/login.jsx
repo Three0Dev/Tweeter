@@ -12,6 +12,7 @@ const SignUp = () => {
       if (exists) return;
       Three0.DB.orbitdb.docs(
         // TODO USERS COLLECTION
+        "three0.tweeterdemo.users"
       ).then(db => {
         let userPromise = db.put({
           _id: Three0.AUTH.getAccountId(),

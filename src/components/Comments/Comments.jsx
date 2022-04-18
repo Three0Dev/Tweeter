@@ -11,6 +11,7 @@ const Comments = ({ tweetID }) => {
       try {
         let tweets = (await Three0.DB.orbitdb.docs(
           // TODO TWEETS COLLECTION
+          "three0.tweeterdemo.tweets"
         )).query(doc => doc.parentTweetID === tweetID);
         
         const localComments = [];
@@ -24,7 +25,7 @@ const Comments = ({ tweetID }) => {
           localComments.push({
             ...tweet,
             id,
-            createdAt: tweet.createdAt.toDate().toString(),
+            createdAt: (new Date(tweet.createdAt)).toString(),
             author: userInfo,
           });
         }

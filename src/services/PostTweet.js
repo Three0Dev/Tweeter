@@ -7,9 +7,12 @@ const postTweet = async (
   parentTweet = null
 ) => {
   console.log(authorId, text, imgLink, parentTweet);
-  let db = Three0.DB.orbitdb.docs(
-    // TODO TWEET ADDRESS
+  let db = await Three0.DB.orbitdb.docs(
+    // TODO TWEETS COLLECTION
+    "three0.tweeterdemo.tweets"
   )
+
+  console.log(db);
   await db.put({
     _id: Three0.DB.create_UUID(),
     authorId,
