@@ -1,6 +1,6 @@
-import BookmarkIcon from "@material-ui/icons/Bookmark";
-import ExploreIcon from "@material-ui/icons/Explore";
-import HomeIcon from "@material-ui/icons/Home";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import ExploreIcon from "@mui/icons-material/Explore";
+import HomeIcon from "@mui/icons-material/Home";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext } from "react";

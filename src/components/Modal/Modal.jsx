@@ -1,4 +1,4 @@
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 import Link from "next/link";
 import { useContext, useState } from "react";
 import UserContext from "../../context/UserContext";

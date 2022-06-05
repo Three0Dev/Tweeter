@@ -1,7 +1,7 @@
-import CircularProgress from "@material-ui/core/CircularProgress";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import CircularProgress from "@mui/material/CircularProgress";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import Link from "next/link";
 import React, { useState } from "react";
 import { handleSignOut } from "../../services/Authentication";

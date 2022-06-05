@@ -1,4 +1,4 @@
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 import React, { useContext, useState } from "react";
 import UserContext from "../../context/UserContext";
 import postTweet from "../../services/PostTweet";

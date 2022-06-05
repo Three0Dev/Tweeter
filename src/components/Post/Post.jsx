@@ -1,9 +1,9 @@
-import BookmarkIcon from "@material-ui/icons/Bookmark";
-import BookmarkBorderIcon from "@material-ui/icons/BookmarkBorder";
-import ChatBubbleOutlineIcon from "@material-ui/icons/ChatBubbleOutline";
-import DeleteIcon from "@material-ui/icons/Delete";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";

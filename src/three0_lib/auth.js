@@ -1,8 +1,18 @@
 import { CONTRACT_NAME, PID } from "./config";
-
+import { providers } from "near-api-js";
+import getConfig from "./config";
 
 export async function initAuth(){
     if(!isLoggedIn()) return;
+
+    // const nearConfig = getConfig(process.env.NODE_ENV || "development");
+
+    // const provider = new providers.JsonRpcProvider(
+    //     `https://archival-rpc.${nearConfig.networkId}.near.org`
+    //   );
+      
+    // const result = await provider.txStatus(hash, window.accountId)
+    // console.log(result);
         
     if(window[CONTRACT_NAME]){
         window[CONTRACT_NAME] = false;
@@ -10,28 +20,16 @@ export async function initAuth(){
         return;
     }
 
-    if(!(await window.contract.user_exists({project_id: PID, account_id: this.getAccountId()}))){
-        try {
-            await window.contract.create_user({project_id: PID});
-        } catch (e) {
-            console.error(e)
-            throw e
+    try {
+        const user = await window.contract.get_user({project_id: PID, account_id: this.getAccountId()});
+        if(!user.is_online){
+           loginHelper(PID)
         }
     }
-
-
-    const user = await window.contract.get_user({project_id: PID, account_id: this.getAccountId()});
-    if(!user.is_online){
-        window[CONTRACT_NAME] = true;
-        try {
-            await window.contract.user_action({
-                project_id: PID,
-                action: "LOGIN"
-            })
-        }
-        catch (e) {
-            console.error(e)
-            throw e
+    catch (e) {
+        if (e.message.includes("User not found"))
+        {
+            loginHelper(PID)
         }
     }
 }
@@ -66,4 +64,18 @@ export function login(appName = "My Three0 App",successURL = window.location.hre
     window[CONTRACT_NAME] = false;
     // console.log(successURL)
     window.walletConnection.requestSignIn(CONTRACT_NAME, appName, successURL, failureURL)
+}
+
+export async function loginHelper(PID){
+    window[CONTRACT_NAME] = true;
+    try {
+        await window.contract.user_action({
+            project_id: PID,
+            action: "LOGIN"
+        })
+    }
+    catch (e) {
+        console.error(e)
+        throw e
+    }
 }

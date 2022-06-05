@@ -1,4 +1,4 @@
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from "@mui/material/CircularProgress";
 import Head from "next/head";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
