@@ -18,7 +18,7 @@
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.8.2",
     "@mui/material": "^5.8.2",
-    "ipfs-core": "^0.15.0",
+    "ipfs-core": "^0.14.3",
     "js-sha256": "^0.9.0",
     "near-api-js": "^0.44.2",
     "next": "^12.1.6",

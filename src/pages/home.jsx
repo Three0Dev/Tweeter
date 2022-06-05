@@ -24,7 +24,8 @@ const Home = () => {
     HomeTweetsContext
   );
 
-  useEffect(async () => {
+  useEffect(() => {
+    async function fetchHomeTweets() {
     try {
       if (user) {
         if (!homeTweetsContext) {
@@ -85,6 +86,8 @@ const Home = () => {
     } catch (err) {
       console.log(err);
     }
+  }
+  fetchHomeTweets();
   }, [user]);
 
   return (
