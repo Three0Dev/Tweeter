@@ -11,7 +11,7 @@ const Suggestions = ({ type, userID }) => {
   const { user: authUser } = useContext(UserContext);
 
   useEffect(() => {
-    async function fetchUser() {
+    async function fetchUserData() {
     if (authUser) {
       const localUser = await fetchUser({
         userID,
@@ -21,7 +21,7 @@ const Suggestions = ({ type, userID }) => {
       setLoading(false);
     }
   }
-  fetchUser();
+  fetchUserData();
   }, []);
 
   return (
