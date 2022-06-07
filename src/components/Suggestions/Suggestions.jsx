@@ -10,7 +10,8 @@ const Suggestions = ({ type, userID }) => {
   const [loading, setLoading] = useState(true);
   const { user: authUser } = useContext(UserContext);
 
-  useEffect(async () => {
+  useEffect(() => {
+    async function fetchUser() {
     if (authUser) {
       const localUser = await fetchUser({
         userID,
@@ -19,7 +20,9 @@ const Suggestions = ({ type, userID }) => {
       setUser({ ...localUser, followersCount: followersCount.length });
       setLoading(false);
     }
-  }, [authUser]);
+  }
+  fetchUser();
+  }, []);
 
   return (
     <div className="bg-white w-full p-5 rounded-lg">

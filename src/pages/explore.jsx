@@ -15,7 +15,8 @@ const Explore = () => {
     ExploreTweetsContext
   );
 
-  useEffect(async () => {
+  useEffect(() => {
+    async function fetchExploreTweets() {
     if (!exploreTweetsContext) {
       let tweetRef = await Three0.DB.orbitdb.docs(
         // TODO TWEETS COLLECTION
@@ -47,6 +48,8 @@ const Explore = () => {
     } else {
       setExploreTweets(exploreTweetsContext);
     }
+    }
+    fetchExploreTweets();
   }, []);
 
   return (

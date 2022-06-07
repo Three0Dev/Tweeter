@@ -114,7 +114,8 @@ const Post = ({ tweet }) => {
     });
   };
 
-  useEffect(async () => {
+  useEffect(() => {
+    async function fetchData() {
     setLikes((await fetchTweetLikes(localTweet.id)).length);
     if (user) {
       function isValidTweet(tweetComp) {
@@ -173,6 +174,8 @@ const Post = ({ tweet }) => {
       }
     }
     setSaves((await fetchTweetSaves(localTweet.id)).length);
+    }
+    fetchData();
   }, []);
 
   return (
