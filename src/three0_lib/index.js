@@ -1,23 +1,24 @@
-import { initContract } from './utils'
-import { setContractName, setPID } from './config'
-import * as Database from './database'
-import * as Auth from './auth'
+import { initContract as initNear } from './NEAR';
+import * as Database from './database';
+import * as Auth from './auth';
 
 const init = async (projectConfig) => {
-    setContractName(projectConfig.contractName)
-    setPID(projectConfig.projectId)
+  switch (projectConfig.chainType) {
+    case 'NEAR_TESTNET':
+      await initNear(projectConfig);
+      break;
+    default:
+      throw Error(`Unconfigured chainType '${projectConfig.chainType}'`);
+  }
 
-    await initContract()
-    await Auth.initAuth()
+  globalThis.projectConfig = projectConfig
 
-    if(Auth.isLoggedIn()){
-        let ipfs = await Database.initIPFS()
-        await Database.initOrbitDB(ipfs);
-    }
-}
+  await Auth.initAuth();
+  await Database.initOrbitDB(projectConfig.chainType, Auth.isLoggedIn());
+};
 
 export {
-    Database as DB,
-    Auth as AUTH,
-    init
-}
+  Database as DB,
+  Auth as AUTH,
+  init,
+};
