@@ -6,7 +6,7 @@ import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
 import "../styles/global.css";
 import "../styles/reset.css";
-import Three0, {init} from '../three0';
+import {init, AUTH, DB} from '../three0lib';
 
 function MyApp({ Component, pageProps }) {
   const Router = useRouter();
@@ -18,52 +18,60 @@ function MyApp({ Component, pageProps }) {
   const [bookmarksTweetsContext, setBookmarksTweetsContext] = useState(null);
 
   useEffect(() => {
-    init().then(otherStuff)
+    const config = {
+        "contractName": "dev-1654358258368-10220982874835",
+        "projectId": "project_0",
+        "chainType": "NEAR_TESTNET",
+    };
+
+    init(config).then(otherStuff);
 
     function otherStuff(){
-      if (!Three0.AUTH.isLoggedIn()) {
+      if (!AUTH.isLoggedIn()) {
         if (protectedRoutes.includes(Router.pathname)) Router.push("/");
         setUser(null);
       } else {
-        Three0.DB.get(
+        DB.getDocStore(
           // TODO USERS COLLECTION
           "three0.tweeterdemo.users"
-        ).then(db => Three0.DB.fetchDB(db)).then(data => {
-          if(data?.length > 0) {
+        ).then(db => {
+          const data = db.get(AUTH.getAccountId());
+
+          console.log(data);
+
+          if(data) {
             let me = {
-              ...data[0].payload.value,
-              uid: data[0].payload.value._id,
+              ...data,
+              uid: data._id,
             }
-            me.profilePicture = data[0].payload.value.profilePicture == "" ? 'https://picsum.photos/200' : data[0].payload.value.profilePicture,
+            me.profilePicture = !data.profilePicture ? 'https://picsum.photos/200' : data.profilePicture,
 
             setUser(me);
           }else{
             const me = {
-              _id: Three0.AUTH.getAccountId(),
-              username: Three0.AUTH.getAccountId(),
-              name: Three0.AUTH.getAccountId(),
+              username: AUTH.getAccountId(),
+              name: AUTH.getAccountId(),
               email: "",
-              profilePicture: 'https://picsum.photos/200',
+              profilePicture: `https://picsum.photos/seed/${AUTH.getAccountId()}/200`,
               bio: "",
             }
-            Three0.DB.orbitdb.docs(
+            DB.getDocStore(
               // TODO USERS COLLECTION
               "three0.tweeterdemo.users"
             ).then(db => {
-              db.put(me).then(() => {
+              db.set(AUTH.getAccountId(), me).then(() => {
                 console.log('saved');
-                setUser({...me, uid: Three0.AUTH.getAccountId()});
+                setUser({...me, uid: AUTH.getAccountId()});
               });
             });
 
-            Three0.DB.orbitdb.docs(
+            DB.getDocStore(
               // TODO CONNECTIONS COLLECTION
               "three0.tweeterdemo.connections"
             ).then(db => {
-              db.put({
-                _id: Three0.DB.create_UUID(),
-                followerID: Three0.AUTH.getAccountId(),
-                followeeID: Three0.AUTH.getAccountId(),
+              db.add({
+                followerID: AUTH.getAccountId(),
+                followeeID: AUTH.getAccountId(),
               }).then(() => {
                 console.log('saved connections');
               });

@@ -26,5 +26,6 @@ const initIPFS = async () => {
 };
 
 export {
+  // eslint-disable-next-line import/prefer-default-export
   initIPFS,
 };
