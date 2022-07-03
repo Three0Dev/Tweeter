@@ -7,14 +7,12 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import Three0 from "../../three0";
+import {DB} from "../../three0lib";
 import { deleteTweet } from "../../services/DeleteTweet";
 import { fetchTweetLikes, fetchTweetSaves } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
 
 const Post = ({ tweet }) => {
-  let db = Three0.DB.orbitdb;
-
   const { user } = useContext(UserContext);
   const [localTweet, setLocalTweet] = useState(tweet);
 
@@ -36,15 +34,12 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    const likesCollection = await db.docs(
-      // TODO LIKES COLLECTION
+    const likesCollection = await DB.getDocStore(
+      
       "three0.tweeterdemo.likes"
     );
 
-    const id = Three0.DB.create_UUID();
-
-    await likesCollection.put({
-      _id: id,
+    let id = await likesCollection.add({
       userID: user.uid,
       tweetID: tweet.id,
     });
@@ -60,11 +55,11 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    db.docs(
-      // TODO LIKES COLLECTION
+    DB.getDocStore(
+      
       "three0.tweeterdemo.likes"
     ).then(likesCollection => {
-      likesCollection.del(likeDocID).then(() => {
+      likesCollection.delete(likeDocID).then(() => {
         setLikes((prev) => prev - 1);
         setIsLiked(false);
       });
@@ -77,17 +72,14 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    let id = Three0.DB.create_UUID();
-
-     db.docs(
-      // TODO SAVES COLLECTION
+    DB.getDocStore(
+      
       "three0.tweeterdemo.saves"
     ).then(savesCollection => {
-      savesCollection.put({
-        _id: id,
+      savesCollection.add({
         tweetID: tweet.id,
         userID: user.uid,
-      }).then(() => {
+      }).then((id) => {
         setSaves((prev) => prev + 1);
         setSaveDocID(id);
         setIsSaved(true);
@@ -101,11 +93,11 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    db.docs(
-      // TODO SAVES COLLECTION
+    DB.getDocStore(
+      
       "three0.tweeterdemo.saves"
     ).then(savesCollection => {
-      savesCollection.del(
+      savesCollection.delete(
         saveDocID
       ).then(() => {
         setSaves((prev) => prev - 1);
@@ -116,21 +108,19 @@ const Post = ({ tweet }) => {
 
   useEffect(() => {
     async function fetchData() {
-    setLikes((await fetchTweetLikes(localTweet.id)).length);
+    setLikes((await fetchTweetLikes(localTweet._id)).length);
     if (user) {
       function isValidTweet(tweetComp) {
-        return tweetComp.userID == user.uid && tweet.id == tweetComp.tweetID;
+        return tweetComp.userID == user.uid && tweet._id == tweetComp.tweetID;
       }
 
       async function checkForLikes() {
-        let docs = await db.docs(
-          // TODO LIKES COLLECTION
+        let docs = await DB.getDocStore(
+          
           "three0.tweeterdemo.likes"
         )
-
-        await docs.load();
         
-        docs = docs.query(isValidTweet);
+        docs = docs.where(isValidTweet);
 
         if (docs.length === 1) {
           setIsLiked(true);
@@ -140,14 +130,12 @@ const Post = ({ tweet }) => {
       checkForLikes();
 
       async function checkForSaves() {
-        let docs = await db.docs(
-         // TODO SAVES COLLECTION
+        let docs = await DB.getDocStore(
+         
          "three0.tweeterdemo.saves"
         )
-
-        await docs.load();
         
-        docs = docs.query(isValidTweet);
+        docs = docs.where(isValidTweet);
 
         if (docs.length === 1) {
           setIsSaved(true);
@@ -157,14 +145,12 @@ const Post = ({ tweet }) => {
       checkForSaves();
 
       async function getCommentsCount() {
-        let res = await db.docs(
-          // TODO TWEETS COLLECTION
+        let res = await DB.getDocStore(
+          
           "three0.tweeterdemo.tweets"
         )
-        
-        await res.load();
 
-        res = res.query(doc => doc.parentTweet == tweet.id);
+        res = res.where(doc => doc.parentTweet == tweet._id);
         setComments(res.length);
       }
 
@@ -173,7 +159,7 @@ const Post = ({ tweet }) => {
         setMyTweet(true);
       }
     }
-    setSaves((await fetchTweetSaves(localTweet.id)).length);
+    setSaves((await fetchTweetSaves(localTweet._id)).length);
     }
     fetchData();
   }, []);
@@ -206,7 +192,7 @@ const Post = ({ tweet }) => {
                 "Are you sure you want to delete this tweet?"
               );
               if (answer) {
-                deleteTweet(tweet.id);
+                deleteTweet(tweet._id);
               }
             }}>
             <DeleteIcon htmlColor={"red"} fontSize="medium" />

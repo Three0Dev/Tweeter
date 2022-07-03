@@ -7,7 +7,6 @@ import Filters from "../../components/Filters/Filters";
 import Post from "../../components/Post/Post";
 import UserInfo from "../../components/UserInfo/UserInfo";
 import fetchAllUserData from "../../services/FetchData";
-import {init} from '../../three0'
 import { useRouter } from 'next/router'
 
 const UserName = () => {
@@ -19,12 +18,10 @@ const UserName = () => {
   const { username } = router.query
 
   useEffect(() => {
-    init().then(() => {
-      fetchAllUserData(username).then(obj => {
-        setUserExits(!!obj);
-        setUser(obj.fetchedUser);
-        setTweets(obj.tweets);
-      });
+    fetchAllUserData(username).then(obj => {
+      setUserExits(!!obj);
+      setUser(obj.fetchedUser);
+      setTweets(obj.tweets);
     });
   }, []);
 
@@ -51,7 +48,7 @@ const UserName = () => {
             </div>
             <div className="mx-4 sm:mx-12 md:mx-24 m-auto">
               <div className="flex flex-col lg:grid lg:grid-cols-3 lg:col-gap-5">
-                <div className="mb-5">
+                <div className="mb-5 mr-5">
                   <Filters />
                 </div>
                 <div className="col-span-2">

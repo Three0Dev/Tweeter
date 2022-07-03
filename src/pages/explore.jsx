@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import ExploreFilters from "../components/ExploreFIlters/ExploreFilters";
 import Post from "../components/Post/Post";
 import ExploreTweetsContext from "../context/ExploreTweetsContext";
-import Three0 from '../three0';
+import {DB} from '../three0lib';
 import Layout from "../layouts";
 import { fetchUser } from "../services/FetchData";
 
@@ -18,14 +18,12 @@ const Explore = () => {
   useEffect(() => {
     async function fetchExploreTweets() {
     if (!exploreTweetsContext) {
-      let tweetRef = await Three0.DB.orbitdb.docs(
-        // TODO TWEETS COLLECTION
+      let tweetRef = await DB.getDocStore(
+        
         "three0.tweeterdemo.tweets"
       )
-
-      await tweetRef.load();
       
-      tweetRef = tweetRef.query(doc => doc.parentTweet == null);
+      tweetRef = tweetRef.where(doc => doc.parentTweet == null);
       
       const exploreUserTweets = [];
 

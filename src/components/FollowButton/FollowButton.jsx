@@ -1,7 +1,7 @@
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import Three0 from "../../three0";
+import { DB } from "../../three0lib";
 
 const FollowButton = ({ userID }) => {
   const { user } = useContext(UserContext);
@@ -14,19 +14,17 @@ const FollowButton = ({ userID }) => {
       return;
     }
 
-    let id = Three0.DB.create_UUID();
-
-    Three0.DB.orbitdb.docs(
-      // TODO CONNECTIONS COLLECTION
+    DB.getDocStore(
+      
       "three0.tweeterdemo.connections"
     ).then(connectionsCollection => {
-      connectionsCollection.put({
-        _id: id,
+      connectionsCollection.add({
         followerID: user.uid,
         followeeID: userID,
-      }).then(() => {
+      }).then((val) => {
+        console.log(val);
         setIsFollowing(true);
-        setFollowingDocID(id);
+        // setFollowingDocID(id);
       }).catch(err => {
         console.log(err);
       });
@@ -41,11 +39,11 @@ const FollowButton = ({ userID }) => {
       return;
     }
 
-    Three0.DB.orbitdb.docs(
-      // TODO CONNECTIONS COLLECTION
+    DB.getDocStore(
+      
       "three0.tweeterdemo.connections"
     ).then(connectionsCollection => {
-      connectionsCollection.del(connectionDocID).then(() => {
+      connectionsCollection.delete(connectionDocID).then(() => {
         setIsFollowing(false);
       }).catch(err => {
         console.log(err);
@@ -59,14 +57,14 @@ const FollowButton = ({ userID }) => {
   useEffect(() => {
     if (user) {
       async function checkFollowing() {
-        const result = (await Three0.DB.orbitdb.docs(
-          // TODO CONNECTIONS COLLECTION
+        const result = (await DB.getDocStore(
+          
           "three0.tweeterdemo.connections"
-        )).query(doc => doc.followeeID == userID && doc.followerID == user.uid);
+        )).where(doc => doc.followeeID == userID && doc.followerID == user.uid);
           
         if (result.length === 1) {
           setIsFollowing(true);
-          setFollowingDocID(result[0]._id);
+          // setFollowingDocID(result[0]._id);
         }
       }
       checkFollowing();

@@ -6,7 +6,7 @@ import Filters from "../components/Filters/Filters";
 import Post from "../components/Post/Post";
 import BookmarksTweetsContext from "../context/BookmarksTweetsContext";
 import UserContext from "../context/UserContext";
-import Three0 from '../three0';
+import {DB} from '../three0lib';
 import Layout from "../layouts";
 import { fetchTweet } from "../services/FetchData";
 
@@ -24,14 +24,12 @@ const Bookmarks = () => {
       if (!bookmarksTweetsContext) {
         async function getSavedTweets() {
           const localBMTweets = [];
-          let savesSnapShot = await Three0.DB.orbitdb.docs(
-            // TODO SAVES COLLECTION
+          let savesSnapShot = await DB.getDocStore(
+            
             "three0.tweeterdemo.saves"
           )
-
-          await savesSnapShot.load();
           
-          savesSnapShot = savesSnapShot.query(doc => doc.userID === user.uid);
+          savesSnapShot = savesSnapShot.where(doc => doc.userID === user.uid);
 
           if (savesSnapShot.length == 0) {
             setIsEmpty(true);
@@ -79,7 +77,7 @@ const Bookmarks = () => {
                 </div>
               )}
               {isEmpty ? (
-                <h1>You have no Saved Tweets</h1>
+                <h1 className="text-center">You have no Saved Tweets</h1>
               ) : (
                 bookmarkTweets.map((tweet) => (
                   <Link href={`${tweet.author.username}/status/${tweet.id}`}>

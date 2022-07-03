@@ -3,11 +3,16 @@ import React, { useContext, useState } from "react";
 import UserContext from "../../context/UserContext";
 import postTweet from "../../services/PostTweet";
 import Avatar from "../Avatar/Avatar";
+import HomeTweetsContext from "../../context/HomeTweetsContext";
+
 
 const TweetInput = () => {
   const { user } = useContext(UserContext);
   const [tweet, setTweet] = useState("");
   const [tweeting, setTweeting] = useState(false);
+  const { homeTweetsContext, setHomeTweetsContext } = useContext(
+    HomeTweetsContext
+  );
 
   return (
     <div className=" bg-white rounded-lg h-auto overflow-hidden ">
@@ -24,7 +29,8 @@ const TweetInput = () => {
                   e.preventDefault();
                   async function postTweetHandler() {
                     setTweeting(true);
-                    await postTweet(user.uid, tweet.trim());
+                    const newTweet = await postTweet(user.uid, tweet.trim());
+                    setHomeTweetsContext([...homeTweetsContext, newTweet])
                     setTweeting(false);
                     setTweet("");
                   }

@@ -6,7 +6,14 @@ import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
 import "../styles/global.css";
 import "../styles/reset.css";
-import {init, AUTH, DB} from '../three0lib';
+import {AUTH, DB , init} from 'three0-js-sdk';
+
+const config = {
+  "contractName": "dev-1654358258368-10220982874835",
+  "projectId": "project_0",
+  "chainType": "NEAR_TESTNET",
+};
+
 
 function MyApp({ Component, pageProps }) {
   const Router = useRouter();
@@ -18,26 +25,18 @@ function MyApp({ Component, pageProps }) {
   const [bookmarksTweetsContext, setBookmarksTweetsContext] = useState(null);
 
   useEffect(() => {
-    const config = {
-        "contractName": "dev-1654358258368-10220982874835",
-        "projectId": "project_0",
-        "chainType": "NEAR_TESTNET",
-    };
+    init(config).then(initBody)
 
-    init(config).then(otherStuff);
-
-    function otherStuff(){
+    function initBody(){
+      console.log(true);
       if (!AUTH.isLoggedIn()) {
         if (protectedRoutes.includes(Router.pathname)) Router.push("/");
         setUser(null);
       } else {
         DB.getDocStore(
-          // TODO USERS COLLECTION
           "three0.tweeterdemo.users"
         ).then(db => {
           const data = db.get(AUTH.getAccountId());
-
-          console.log(data);
 
           if(data) {
             let me = {
@@ -56,7 +55,6 @@ function MyApp({ Component, pageProps }) {
               bio: "",
             }
             DB.getDocStore(
-              // TODO USERS COLLECTION
               "three0.tweeterdemo.users"
             ).then(db => {
               db.set(AUTH.getAccountId(), me).then(() => {
@@ -66,7 +64,7 @@ function MyApp({ Component, pageProps }) {
             });
 
             DB.getDocStore(
-              // TODO CONNECTIONS COLLECTION
+              
               "three0.tweeterdemo.connections"
             ).then(db => {
               db.add({
@@ -78,7 +76,8 @@ function MyApp({ Component, pageProps }) {
             })
           }
         })
-      }
+    }
+     
   } 
   }, [Router.pathname]);
 

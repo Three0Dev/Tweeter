@@ -1,26 +1,28 @@
-import Three0 from "../three0";
+import { DB } from '../three0lib';
 
 const postTweet = async (
   authorId,
   text,
   imgLink = null,
-  parentTweet = null
+  parentTweet = null,
 ) => {
-  console.log(authorId, text, imgLink, parentTweet);
-  let db = await Three0.DB.orbitdb.docs(
-    // TODO TWEETS COLLECTION
-    "three0.tweeterdemo.tweets"
-  )
+  const db = await DB.getDocStore(
+    'three0.tweeterdemo.tweets',
+  );
 
-  console.log(db);
-  await db.put({
-    _id: Three0.DB.create_UUID(),
+  const tweetObj = {
     authorId,
     text,
     parentTweet,
     imgLink,
     createdAt: (new Date()).getTime(),
-  });
+  };
+
+  const id = await db.add(tweetObj);
+  return {
+    _id: id,
+    ...tweetObj,
+  };
 };
 
 export default postTweet;

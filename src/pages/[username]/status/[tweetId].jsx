@@ -6,27 +6,33 @@ import Post from "../../../components/Post/Post";
 import Suggestions from "../../../components/Suggestions/Suggestions";
 import UserContext from "../../../context/UserContext";
 import Layout from "../../../layouts";
-import { fetchTweet, fetchUser } from "../../../services/FetchData";
+import { fetchTweet } from "../../../services/FetchData";
 import { useRouter } from 'next/router'
-import {init} from '../../../three0'
+import {init} from '../../../three0lib';
+
+const config = {
+  "contractName": "dev-1654358258368-10220982874835",
+  "projectId": "project_0",
+  "chainType": "NEAR_TESTNET",
+};
 
 const Tweet = () => {
   const { user } = useContext(UserContext);
-  const [tweet, setTweet] = useState({});
+  const [tweet, setTweet] = useState(null);
 
   const router = useRouter()
   const { tweetId } = router.query
 
   useEffect(() => {
-    init().then(() => fetchTweet(tweetId).then(tweetObj => {
-      console.log(tweetObj)
-      setTweet(tweetObj)
-    }));
-  }, []);
+    init(config).then(() => {
+      fetchTweet(tweetId).then(tweetObj => {
+        console.log(tweetObj)
+        setTweet(tweetObj)
+      })
+   });
+  }, [router.pathname]);
 
-
-
-  return (
+  return !tweet ? (<div></div>) : (
     <div>
       <Head>
         <title>

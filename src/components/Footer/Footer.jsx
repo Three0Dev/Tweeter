@@ -18,7 +18,7 @@ const Footer = () => {
           target="_blank"
           rel="noopener noreferrer"
           className="hover:underline cursor-pointer text-gray-900"
-          href="https://three0.umso.co">
+          href="https://three0dev.com">
           Three0
         </a>
       </p>

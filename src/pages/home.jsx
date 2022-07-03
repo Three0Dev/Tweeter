@@ -8,7 +8,7 @@ import Trends from "../components/Trends/Trends";
 import TweetInput from "../components/TweetInput/TweetInput";
 import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
-import Three0 from '../three0';
+import {DB, AUTH} from '../three0lib';
 import Layout from "../layouts";
 import { fetchUser } from "../services/FetchData";
 
@@ -17,8 +17,6 @@ const Home = () => {
   const [homeTweets, setHomeTweets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEmpty, setIsEmpty] = useState(false);
-
-  const db = Three0.DB.orbitdb;
 
   const { homeTweetsContext, setHomeTweetsContext } = useContext(
     HomeTweetsContext
@@ -30,14 +28,12 @@ const Home = () => {
       if (user) {
         if (!homeTweetsContext) {
           setLoading(true);
-          let connectionsRef = await db.docs(
-            // TODO CONNECTIONS COLLECTION
+          let connectionsRef = await DB.getDocStore(
+            
             "three0.tweeterdemo.connections"
           )
-          
-          // await connectionsRef.load();
 
-          connectionsRef = connectionsRef.query(doc => doc.followerID === user.uid);
+          connectionsRef = connectionsRef.where(doc => doc.followerID === user.uid);
 
           if (connectionsRef.length == 0) {
             setIsEmpty(true);
@@ -46,18 +42,13 @@ const Home = () => {
           } else {
             const followerIDs = connectionsRef.map((connection) => connection.followeeID);
 
-            let tweetRef = await db.docs(
-              // TODO TWEETS COLLECTION
+            let tweetRef = await DB.getDocStore(
+              
               "three0.tweeterdemo.tweets"
             )
-
-            await tweetRef.load();
             
-            tweetRef = tweetRef.query(doc => {
-              return followerIDs.includes(doc.authorId) && doc.parentTweet == null;
-            }).sort((a, b) => b.createdAt - a.createdAt);
-
-            console.log(tweetRef);
+            tweetRef = tweetRef.where(doc => followerIDs.includes(doc.authorId) && doc.parentTweet == null)
+              .sort((a, b) => b.createdAt - a.createdAt);
              
             const homeUserTweets = [];
 
@@ -70,7 +61,6 @@ const Home = () => {
               homeUserTweets.push({
                 ...data,
                 createdAt: (new Date(data.createdAt)).toString(),
-                id: tweetRef[i]._id,
                 author: userInfo,
               });
             }
@@ -99,7 +89,7 @@ const Home = () => {
       <Layout>
         <div className="mx-4 sm:mx-12 md:mx-24 lg:mx-24 xl:mx-24 mt-5">
           <div className="flex flex-col lg:grid lg:grid-cols-3 lg:col-gap-5">
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 mr-5">
               <div className="mb-5">
                 <TweetInput />
               </div>
@@ -113,8 +103,8 @@ const Home = () => {
                 <h1>You are following no one</h1>
               ) : (
                 homeTweets.map((tweet) => (
-                  <span key={tweet.id}>
-                    <Link href={`${tweet.author.username}/status/${tweet.id}`}>
+                  <span key={tweet._id}>
+                    <Link href={`${tweet.author.username}/status/${tweet._id}`}>
                       <div className="mb-5">
                         <Post tweet={tweet} />
                       </div>
@@ -128,7 +118,7 @@ const Home = () => {
                 <Trends />
               </div>
               <div className="mb-5">
-                {user && <Suggestions userID={Three0.AUTH.getAccountId()} />}
+                {user && <Suggestions userID={AUTH.getAccountId()} />}
               </div>
             </div>
           </div>

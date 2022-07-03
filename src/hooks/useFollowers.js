@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-import UserContext from "../context/UserContext";
-import { fetchUser, fetchUserFollowers } from "../services/FetchData";
+import React, { useContext } from 'react';
+import UserContext from '../context/UserContext';
+import { fetchUser, fetchUserFollowers } from '../services/FetchData';
 
 export function useFollowers(userId) {
   const { user } = useContext(UserContext);
@@ -17,7 +17,7 @@ export function useFollowers(userId) {
         data.push(
           await fetchUser({
             userID: followersSnapShot[i].followerID,
-          })
+          }),
         );
       }
     }

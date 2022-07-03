@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Three0 from "../../three0";
+import {DB} from "../../three0lib";
 import { fetchUser } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
 
@@ -9,10 +9,10 @@ const Comments = ({ tweetID }) => {
   useEffect(() => {
     const getComments = async () => {
       try {
-        let tweets = (await Three0.DB.orbitdb.docs(
-          // TODO TWEETS COLLECTION
+        let tweets = (await DB.getDocStore(
+          
           "three0.tweeterdemo.tweets"
-        )).query(doc => doc.parentTweetID === tweetID);
+        )).where(doc => doc.parentTweetID === tweetID);
         
         const localComments = [];
 

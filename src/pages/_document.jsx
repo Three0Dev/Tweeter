@@ -1,4 +1,5 @@
 import Document, { Head, Html, Main, NextScript } from "next/document";
+import {init} from '../three0lib';
 
 class MyDocument extends Document {
   static async getInitialProps(ctx) {

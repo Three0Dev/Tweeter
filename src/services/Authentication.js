@@ -1,10 +1,10 @@
-import { AUTH } from '../three0lib'
+import { AUTH } from '../three0lib';
 
 async function handleSignIn() {
   await AUTH.login(
-    "Tweeter",
+    'Tweeter',
     `${window.location.origin}/home`,
-    `${window.location.origin}/`
+    `${window.location.origin}/`,
   );
 }
 

@@ -1,7 +1,7 @@
 import CircularProgress from "@mui/material/CircularProgress";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import { fetchUser, fetchUserFollowers } from "../../services/FetchData";
+import { fetchUser, fetchUserFollowers, fetchNumUsers } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
 import FollowButton from "../FollowButton/FollowButton";
 
@@ -9,6 +9,7 @@ const Suggestions = ({ type, userID }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const { user: authUser } = useContext(UserContext);
+  const [numUsers, setNumUsers] = useState(0);
 
   useEffect(() => {
     async function fetchUserData() {
@@ -22,9 +23,13 @@ const Suggestions = ({ type, userID }) => {
     }
   }
   fetchUserData();
+
+  fetchNumUsers().then((num) => {
+    setNumUsers(num);
+  });
   }, []);
 
-  return (
+  return numUsers === 1 ? (<></>) : (
     <div className="bg-white w-full p-5 rounded-lg">
       {type === "relavant" ? (
         <p className="font-poppins font-semibold text-base mb-3">

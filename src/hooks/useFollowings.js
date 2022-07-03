@@ -1,5 +1,5 @@
-import React from "react";
-import { fetchUser, fetchUserFollowings } from "../services/FetchData";
+import React from 'react';
+import { fetchUser, fetchUserFollowings } from '../services/FetchData';
 
 export function useFollowings(userId) {
   const [followings, setFollowings] = React.useState([]);
@@ -13,7 +13,7 @@ export function useFollowings(userId) {
       data.push(
         await fetchUser({
           userID: followersSnapShot[i].followeeID,
-        })
+        }),
       );
     }
     setFollowings(data);

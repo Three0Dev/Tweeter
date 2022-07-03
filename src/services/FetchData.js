@@ -1,57 +1,47 @@
-import Three0 from "../three0";
+import { DB } from '../three0lib';
+
+export const fetchNumUsers = async () => {
+  const users = await DB.getDocStore('three0.tweeterdemo.users');
+  return users.get().length;
+};
 
 export const fetchUser = async ({ username, userID }) => {
-  let db = Three0.DB.orbitdb;
-
-  let userQuerySnapShot = await db
-  .docs(
-    // TODO USER ADDRESS
-    "three0.tweeterdemo.users"
-    )
-  
-  await userQuerySnapShot.load();
+  const userQuerySnapShot = await DB.getDocStore(
+    'three0.tweeterdemo.users',
+  );
 
   if (username) {
-    let userSnapshot = userQuerySnapShot.query(doc => doc.username === username);
+    const userSnapshot = userQuerySnapShot.where((doc) => doc.username === username);
 
     if (userSnapshot.length == 0) {
       return null;
     }
 
-    let obj = {
+    const obj = {
       uid: userSnapshot[0]._id,
       ...userSnapshot[0],
     };
 
-    obj.profilePicture = userSnapshot[0].profilePicture == "" ? 'https://picsum.photos/200' : userSnapshot[0].profilePicture;
+    obj.profilePicture = userSnapshot[0].profilePicture == '' ? 'https://picsum.photos/200' : userSnapshot[0].profilePicture;
 
     return obj;
   }
 
   if (userID) {
-    let userDoc = userQuerySnapShot.get(userID);
-    if (userDoc.length != 0) {
-      return {
-        uid: userDoc[0]._id,
-        ...userDoc[0],
-      };
-    } else {
-      return null;
-    }
+    const userDoc = userQuerySnapShot.get(userID);
+    return {
+      uid: userDoc._id,
+      ...userDoc,
+    };
   }
 };
 
 export const fetchUserTweets = async (userID) => {
-  let db = Three0.DB.orbitdb;
+  const tweetsQuerySnapShot = await DB.getDocStore(
+    'three0.tweeterdemo.tweets',
+  );
 
-  const tweetsQuerySnapShot = await db
-    .docs(
-      // TODO TWEET ADDRESS
-      "three0.tweeterdemo.tweets"
-    )
-  await tweetsQuerySnapShot.load();  
-    
-  tweetsQuerySnapShot = tweetsQuerySnapShot.query(doc => doc.authorId == userID && doc.parentTweet == null);
+  tweetsQuerySnapShot = tweetsQuerySnapShot.where((doc) => doc.authorId == userID && doc.parentTweet == null);
 
   const fetchedUser = await fetchUser({ userID });
 
@@ -71,22 +61,12 @@ export const fetchUserTweets = async (userID) => {
 };
 
 export const fetchTweet = async (tweetID) => {
-  let db = Three0.DB.orbitdb;
+  const tweetRef = await DB
+    .getDocStore(
+      'three0.tweeterdemo.tweets',
+    );
 
-  let tweetRef = await db
-    .docs(
-      // TODO TWEET ADDRESS
-      "three0.tweeterdemo.tweets"
-    )
-
-  await tweetRef.load();
-    
-  tweetRef = tweetRef.get(tweetID);
-
-
-  if (tweetRef.length == 0) return null;
-
-  const tweet = tweetRef[0];
+  const tweet = tweetRef.get(tweetID);
   const user = await fetchUser({ userID: tweet.authorId });
 
   return {
@@ -98,47 +78,34 @@ export const fetchTweet = async (tweetID) => {
 };
 
 export const fetchUserFollowers = async (userID) => {
-  let db = await Three0.DB.orbitdb.docs(
-     // TODO CONNECTIONS ADDRESS
-     "three0.tweeterdemo.connections"
+  const db = await DB.getDocStore(
+    'three0.tweeterdemo.connections',
   );
 
-  await db.load()
-
-  return db.query(doc => doc.followeeID == userID);
+  return db.where((doc) => doc.followeeID == userID);
 };
 
 export const fetchUserFollowings = async (userID) => {
-  let db = await Three0.DB.orbitdb.docs(
-    // TODO CONNECTIONS ADDRESS
-    "three0.tweeterdemo.connections"
- );
+  const db = await DB.getDocStore(
+    'three0.tweeterdemo.connections',
+  );
 
- await db.load()
-
- return db.query(doc => doc.followerID == userID);
+  return db.where((doc) => doc.followerID == userID);
 };
 
 export const fetchTweetLikes = async (tweetID) => {
-  let db = await Three0.DB.orbitdb.docs(
-     // TODO TWEETS ADDRESS
-     "three0.tweeterdemo.likes"
+  const db = await DB.getDocStore(
+    'three0.tweeterdemo.likes',
   );
 
-  await db.load()
-
-  return db.query(doc => doc.tweetID == tweetID);
+  return db.where((doc) => doc.tweetID == tweetID);
 };
 
 export const fetchTweetSaves = async (tweetID) => {
-  let db = await Three0.DB.orbitdb.docs(
-    // TODO SAVES ADDRESS
-    "three0.tweeterdemo.saves"
-)
-
-  await db.load()
-
-  return db.query(doc => doc.tweetID == tweetID);
+  const db = await DB.getDocStore(
+    'three0.tweeterdemo.saves',
+  );
+  return db.where((doc) => doc.tweetID == tweetID);
 };
 
 const fetchAllUserData = async (username) => {
