@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import ExploreFilters from "../components/ExploreFIlters/ExploreFilters";
 import Post from "../components/Post/Post";
 import ExploreTweetsContext from "../context/ExploreTweetsContext";
-import {DB} from '../three0lib';
+import {DB} from 'three0-js-sdk';
 import Layout from "../layouts";
 import { fetchUser } from "../services/FetchData";
 

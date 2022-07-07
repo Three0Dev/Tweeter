@@ -7,7 +7,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import {DB} from "../../three0lib";
+import {DB} from 'three0-js-sdk';
 import { deleteTweet } from "../../services/DeleteTweet";
 import { fetchTweetLikes, fetchTweetSaves } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";

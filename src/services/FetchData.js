@@ -1,4 +1,4 @@
-import { DB } from '../three0lib';
+import { DB } from 'three0-js-sdk';
 
 export const fetchNumUsers = async () => {
   const users = await DB.getDocStore('three0.tweeterdemo.users');

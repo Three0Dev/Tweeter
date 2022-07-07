@@ -1,4 +1,4 @@
-import { AUTH } from '../three0lib';
+import { AUTH } from 'three0-js-sdk';
 
 async function handleSignIn() {
   await AUTH.login(

@@ -6,7 +6,7 @@ import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
 import "../styles/global.css";
 import "../styles/reset.css";
-import {AUTH, DB , init} from 'three0-js-sdk';
+import Three0, { init } from 'three0-js-sdk';
 
 const config = {
   "contractName": "dev-1654358258368-10220982874835",
@@ -14,6 +14,8 @@ const config = {
   "chainType": "NEAR_TESTNET",
 };
 
+const AUTH = Three0.AUTH;
+const DB = Three0.DB;
 
 function MyApp({ Component, pageProps }) {
   const Router = useRouter();
@@ -28,7 +30,6 @@ function MyApp({ Component, pageProps }) {
     init(config).then(initBody)
 
     function initBody(){
-      console.log(true);
       if (!AUTH.isLoggedIn()) {
         if (protectedRoutes.includes(Router.pathname)) Router.push("/");
         setUser(null);
@@ -63,8 +64,7 @@ function MyApp({ Component, pageProps }) {
               });
             });
 
-            DB.getDocStore(
-              
+            DB.getDocStore(         
               "three0.tweeterdemo.connections"
             ).then(db => {
               db.add({

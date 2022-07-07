@@ -1,4 +1,4 @@
-import { DB } from '../three0lib';
+import { DB } from 'three0-js-sdk';
 
 const postTweet = async (
   authorId,

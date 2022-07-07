@@ -1,7 +1,7 @@
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import { DB } from "../../three0lib";
+import { DB } from 'three0-js-sdk';
 
 const FollowButton = ({ userID }) => {
   const { user } = useContext(UserContext);

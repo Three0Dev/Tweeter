@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {DB} from "../../three0lib";
+import {DB} from 'three0-js-sdk';
 import { fetchUser } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
 

@@ -8,7 +8,7 @@ import Trends from "../components/Trends/Trends";
 import TweetInput from "../components/TweetInput/TweetInput";
 import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
-import {DB, AUTH} from '../three0lib';
+import {DB, AUTH} from 'three0-js-sdk';
 import Layout from "../layouts";
 import { fetchUser } from "../services/FetchData";
 
