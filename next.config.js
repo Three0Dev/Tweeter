@@ -1,3 +1,5 @@
+const nodeExternals = require('webpack-node-externals');
+
 module.exports = {
   webpack: (
     config,
@@ -5,15 +7,20 @@ module.exports = {
       buildId, dev, isServer, defaultLoaders, nextRuntime, webpack,
     },
   ) => {
-    if(isServer) {
+    if (isServer) {
+      config.target = 'node';
+
       config.node = {
         __dirname: true,
+        global: true,
+        __filename: true,
+      };
+
+      config.externals = [nodeExternals()], // in order to ignore all modules in node_modules folder
+      config.externalsPresets = {
+        node: true, // in order to ignore built-in modules like path, fs, etc.
       };
     }
-
-    config.resolve.fallback = {
-      './fetch.node': require.resolve('three0-js-sdk/node_modules/ipfs-utils/src/http/fetch.node'),
-    };
 
     return config;
   },
