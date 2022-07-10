@@ -1,19 +1,18 @@
-import { DB } from 'three0-js-sdk';
+import * as DB from 'three0-js-sdk/database';
+import { env } from '../env';
 
 export const fetchNumUsers = async () => {
-  const users = await DB.getDocStore('three0.tweeterdemo.users');
+  const users = await DB.getDocStore(env.usersDB);
   return users.get().length;
 };
 
 export const fetchUser = async ({ username, userID }) => {
-  const userQuerySnapShot = await DB.getDocStore(
-    'three0.tweeterdemo.users',
-  );
+  const userQuerySnapShot = await DB.getDocStore(env.usersDB);
 
   if (username) {
     const userSnapshot = userQuerySnapShot.where((doc) => doc.username === username);
 
-    if (userSnapshot.length == 0) {
+    if (userSnapshot.length === 0) {
       return null;
     }
 
@@ -22,7 +21,7 @@ export const fetchUser = async ({ username, userID }) => {
       ...userSnapshot[0],
     };
 
-    obj.profilePicture = userSnapshot[0].profilePicture == '' ? 'https://picsum.photos/200' : userSnapshot[0].profilePicture;
+    obj.profilePicture = userSnapshot[0].profilePicture === '' ? 'https://picsum.photos/200' : userSnapshot[0].profilePicture;
 
     return obj;
   }
@@ -34,14 +33,14 @@ export const fetchUser = async ({ username, userID }) => {
       ...userDoc,
     };
   }
+
+  return null;
 };
 
 export const fetchUserTweets = async (userID) => {
-  const tweetsQuerySnapShot = await DB.getDocStore(
-    'three0.tweeterdemo.tweets',
-  );
+  let tweetsQuerySnapShot = await DB.getDocStore(env.tweetsDB);
 
-  tweetsQuerySnapShot = tweetsQuerySnapShot.where((doc) => doc.authorId == userID && doc.parentTweet == null);
+  tweetsQuerySnapShot = tweetsQuerySnapShot.where((doc) => doc.authorId === userID && doc.parentTweet == null);
 
   const fetchedUser = await fetchUser({ userID });
 
@@ -62,15 +61,13 @@ export const fetchUserTweets = async (userID) => {
 
 export const fetchTweet = async (tweetID) => {
   const tweetRef = await DB
-    .getDocStore(
-      'three0.tweeterdemo.tweets',
-    );
+    .getDocStore(env.tweetsDB);
 
   const tweet = tweetRef.get(tweetID);
   const user = await fetchUser({ userID: tweet.authorId });
 
   return {
-    id: tweet._id,
+    id: tweetID,
     ...tweet,
     author: user,
     createdAt: (new Date(tweet.createdAt)).toString(),
@@ -78,34 +75,26 @@ export const fetchTweet = async (tweetID) => {
 };
 
 export const fetchUserFollowers = async (userID) => {
-  const db = await DB.getDocStore(
-    'three0.tweeterdemo.connections',
-  );
+  const db = await DB.getDocStore(env.connectionsDB);
 
-  return db.where((doc) => doc.followeeID == userID);
+  return db.where((doc) => doc.followeeID === userID);
 };
 
 export const fetchUserFollowings = async (userID) => {
-  const db = await DB.getDocStore(
-    'three0.tweeterdemo.connections',
-  );
+  const db = await DB.getDocStore(env.connectionsDB);
 
-  return db.where((doc) => doc.followerID == userID);
+  return db.where((doc) => doc.followerID === userID);
 };
 
 export const fetchTweetLikes = async (tweetID) => {
-  const db = await DB.getDocStore(
-    'three0.tweeterdemo.likes',
-  );
+  const db = await DB.getDocStore(env.likesDB);
 
-  return db.where((doc) => doc.tweetID == tweetID);
+  return db.where((doc) => doc.tweetID === tweetID);
 };
 
 export const fetchTweetSaves = async (tweetID) => {
-  const db = await DB.getDocStore(
-    'three0.tweeterdemo.saves',
-  );
-  return db.where((doc) => doc.tweetID == tweetID);
+  const db = await DB.getDocStore(env.savesDB);
+  return db.where((doc) => doc.tweetID === tweetID);
 };
 
 const fetchAllUserData = async (username) => {

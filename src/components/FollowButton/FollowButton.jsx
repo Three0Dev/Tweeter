@@ -1,7 +1,8 @@
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import { DB } from 'three0-js-sdk';
+import * as DB from 'three0-js-sdk/database';
+import { env } from "../../env";
 
 const FollowButton = ({ userID }) => {
   const { user } = useContext(UserContext);
@@ -14,10 +15,7 @@ const FollowButton = ({ userID }) => {
       return;
     }
 
-    DB.getDocStore(
-      
-      "three0.tweeterdemo.connections"
-    ).then(connectionsCollection => {
+    DB.getDocStore(env.connectionsDB).then(connectionsCollection => {
       connectionsCollection.add({
         followerID: user.uid,
         followeeID: userID,
@@ -39,10 +37,7 @@ const FollowButton = ({ userID }) => {
       return;
     }
 
-    DB.getDocStore(
-      
-      "three0.tweeterdemo.connections"
-    ).then(connectionsCollection => {
+    DB.getDocStore(env.connectionsDB).then(connectionsCollection => {
       connectionsCollection.delete(connectionDocID).then(() => {
         setIsFollowing(false);
       }).catch(err => {
@@ -57,10 +52,7 @@ const FollowButton = ({ userID }) => {
   useEffect(() => {
     if (user) {
       async function checkFollowing() {
-        const result = (await DB.getDocStore(
-          
-          "three0.tweeterdemo.connections"
-        )).where(doc => doc.followeeID == userID && doc.followerID == user.uid);
+        const result = (await DB.getDocStore(env.connectionsDB)).where(doc => doc.followeeID == userID && doc.followerID == user.uid);
           
         if (result.length === 1) {
           setIsFollowing(true);

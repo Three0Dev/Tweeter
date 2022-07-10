@@ -6,9 +6,10 @@ import Filters from "../components/Filters/Filters";
 import Post from "../components/Post/Post";
 import BookmarksTweetsContext from "../context/BookmarksTweetsContext";
 import UserContext from "../context/UserContext";
-import {DB} from 'three0-js-sdk';
+import * as DB from 'three0-js-sdk/database';
 import Layout from "../layouts";
 import { fetchTweet } from "../services/FetchData";
+import { env } from "../env";
 
 const Bookmarks = () => {
   const { user } = useContext(UserContext);
@@ -24,10 +25,7 @@ const Bookmarks = () => {
       if (!bookmarksTweetsContext) {
         async function getSavedTweets() {
           const localBMTweets = [];
-          let savesSnapShot = await DB.getDocStore(
-            
-            "three0.tweeterdemo.saves"
-          )
+          let savesSnapShot = await DB.getDocStore(env.savesDB)
           
           savesSnapShot = savesSnapShot.where(doc => doc.userID === user.uid);
 

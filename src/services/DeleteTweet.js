@@ -1,20 +1,14 @@
-import { DB } from 'three0-js-sdk';
+import * as DB from 'three0-js-sdk/database';
+import { env } from '../env';
 
 export const deleteTweet = (tweetID) => {
-  DB.getDocStore(
-
-    'three0.tweeterdemo.tweets',
-  ).then((tweets) => {
+  DB.getDocStore(env.tweetsDB).then((tweets) => {
     tweets.delete(tweetID)
       .then(() => console.log('Deleted Tweet'))
       .catch((e) => console.log(e));
   }).catch((e) => console.log(e));
 
-  DB.getDocStore(
-
-    'three0.tweeterdemo.likes',
-
-  ).then((likes) => {
+  DB.getDocStore(env.likesDB).then((likes) => {
     const promises = [];
     likes.where((doc) => doc.tweetID === tweetID)
       .forEach((doc) => promises.push(likes.delete(doc._id)));
@@ -22,10 +16,7 @@ export const deleteTweet = (tweetID) => {
     Promise.all(promises).then(() => console.log('Deleted Likes')).catch((e) => console.log(e));
   }).catch((e) => console.log(e));
 
-  DB.getDocStore(
-
-    'three0.tweeterdemo.saves',
-  ).then((likes) => {
+  DB.getDocStore(env.savesDB).then((likes) => {
     const promises = [];
     likes.where((doc) => doc.tweetID === tweetID)
       .forEach((doc) => promises.push(likes.delete(doc._id)));

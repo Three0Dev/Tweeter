@@ -5,9 +5,10 @@ import React, { useEffect, useState } from "react";
 import ExploreFilters from "../components/ExploreFIlters/ExploreFilters";
 import Post from "../components/Post/Post";
 import ExploreTweetsContext from "../context/ExploreTweetsContext";
-import {DB} from 'three0-js-sdk';
+import * as DB from 'three0-js-sdk/database';
 import Layout from "../layouts";
 import { fetchUser } from "../services/FetchData";
+import { env } from "../env";
 
 const Explore = () => {
   const [exploreTweets, setExploreTweets] = useState([]);
@@ -18,10 +19,7 @@ const Explore = () => {
   useEffect(() => {
     async function fetchExploreTweets() {
     if (!exploreTweetsContext) {
-      let tweetRef = await DB.getDocStore(
-        
-        "three0.tweeterdemo.tweets"
-      )
+      let tweetRef = await DB.getDocStore(env.tweetsDB)
       
       tweetRef = tweetRef.where(doc => doc.parentTweet == null);
       

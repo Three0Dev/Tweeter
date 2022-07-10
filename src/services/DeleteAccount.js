@@ -1,23 +1,16 @@
-import { DB } from 'three0-js-sdk';
-
+import * as DB from 'three0-js-sdk/database';
 import { deleteTweet } from './DeleteTweet';
+import { env } from '../env';
 
 export const deleteAccount = async (userID) => {
   // Delete user doc from "users" collection
-  const usersDB = DB.getDocStore(
-
-    'three0.tweeterdemo.users',
-  );
+  const usersDB = DB.getDocStore(env.usersDB);
 
   usersDB.delete(userID)
     .then(console.log('Deleted User Doc'))
     .catch((e) => console.log(e));
 
-  // Get all tweets that has authorID = user.uid in "tweets" collection
-  const tweetsSnapShot = await DB.getDocStore(
-
-    'three0.tweeterdemo.tweets',
-  );
+  const tweetsSnapShot = await DB.getDocStore(env.tweetsDB);
 
   tweetsSnapShot.where((doc) => doc.authorID === userID)
     .forEach((tweetsDoc) => {
@@ -27,10 +20,7 @@ export const deleteAccount = async (userID) => {
 
   // Delete all connections
   const connectionList = [];
-  const connectionsCollection = await DB.getDocStore(
-
-    'three0.tweeterdemo.connections',
-  );
+  const connectionsCollection = await DB.getDocStore(connectionsDB);
 
   connectionsCollection.where((doc) => doc.followerID === userID || doc.followeeID === userID)
     .forEach((connectionDoc) => connectionList.push(connectionsCollection.delete(connectionDoc._id)));

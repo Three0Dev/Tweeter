@@ -7,10 +7,11 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import {DB} from 'three0-js-sdk';
+import * as DB from 'three0-js-sdk/database';
 import { deleteTweet } from "../../services/DeleteTweet";
 import { fetchTweetLikes, fetchTweetSaves } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
+import { env } from "../../env";
 
 const Post = ({ tweet }) => {
   const { user } = useContext(UserContext);
@@ -34,10 +35,7 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    const likesCollection = await DB.getDocStore(
-      
-      "three0.tweeterdemo.likes"
-    );
+    const likesCollection = await DB.getDocStore(env.likesDB);
 
     let id = await likesCollection.add({
       userID: user.uid,
@@ -55,10 +53,7 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    DB.getDocStore(
-      
-      "three0.tweeterdemo.likes"
-    ).then(likesCollection => {
+    DB.getDocStore(env.likesDB).then(likesCollection => {
       likesCollection.delete(likeDocID).then(() => {
         setLikes((prev) => prev - 1);
         setIsLiked(false);
@@ -72,10 +67,7 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    DB.getDocStore(
-      
-      "three0.tweeterdemo.saves"
-    ).then(savesCollection => {
+    DB.getDocStore(env.savesDB).then(savesCollection => {
       savesCollection.add({
         tweetID: tweet.id,
         userID: user.uid,
@@ -93,10 +85,7 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    DB.getDocStore(
-      
-      "three0.tweeterdemo.saves"
-    ).then(savesCollection => {
+    DB.getDocStore(env.savesDB).then(savesCollection => {
       savesCollection.delete(
         saveDocID
       ).then(() => {
@@ -115,10 +104,7 @@ const Post = ({ tweet }) => {
       }
 
       async function checkForLikes() {
-        let docs = await DB.getDocStore(
-          
-          "three0.tweeterdemo.likes"
-        )
+        let docs = await DB.getDocStore(env.likesDB)
         
         docs = docs.where(isValidTweet);
 
@@ -130,10 +116,7 @@ const Post = ({ tweet }) => {
       checkForLikes();
 
       async function checkForSaves() {
-        let docs = await DB.getDocStore(
-         
-         "three0.tweeterdemo.saves"
-        )
+        let docs = await DB.getDocStore(env.savesDB)
         
         docs = docs.where(isValidTweet);
 
@@ -145,10 +128,7 @@ const Post = ({ tweet }) => {
       checkForSaves();
 
       async function getCommentsCount() {
-        let res = await DB.getDocStore(
-          
-          "three0.tweeterdemo.tweets"
-        )
+        let res = await DB.getDocStore(env.tweetsDB)
 
         res = res.where(doc => doc.parentTweet == tweet._id);
         setComments(res.length);

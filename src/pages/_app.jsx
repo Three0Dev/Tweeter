@@ -6,16 +6,10 @@ import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
 import "../styles/global.css";
 import "../styles/reset.css";
-import Three0, { init } from 'three0-js-sdk';
-
-const config = {
-  "contractName": "dev-1654358258368-10220982874835",
-  "projectId": "project_0",
-  "chainType": "NEAR_TESTNET",
-};
-
-const AUTH = Three0.AUTH;
-const DB = Three0.DB;
+import init from 'three0-js-sdk';
+import * as AUTH from 'three0-js-sdk/auth';
+import * as DB from 'three0-js-sdk/database';
+import { env } from "../env";
 
 function MyApp({ Component, pageProps }) {
   const Router = useRouter();
@@ -27,16 +21,14 @@ function MyApp({ Component, pageProps }) {
   const [bookmarksTweetsContext, setBookmarksTweetsContext] = useState(null);
 
   useEffect(() => {
-    init(config).then(initBody)
+    init(env.three0Config).then(initBody)
 
     function initBody(){
       if (!AUTH.isLoggedIn()) {
         if (protectedRoutes.includes(Router.pathname)) Router.push("/");
         setUser(null);
       } else {
-        DB.getDocStore(
-          "three0.tweeterdemo.users"
-        ).then(db => {
+        DB.getDocStore(env.usersDB).then(db => {
           const data = db.get(AUTH.getAccountId());
 
           if(data) {
@@ -55,18 +47,14 @@ function MyApp({ Component, pageProps }) {
               profilePicture: `https://picsum.photos/seed/${AUTH.getAccountId()}/200`,
               bio: "",
             }
-            DB.getDocStore(
-              "three0.tweeterdemo.users"
-            ).then(db => {
+            DB.getDocStore(env.usersDB).then(db => {
               db.set(AUTH.getAccountId(), me).then(() => {
                 console.log('saved');
                 setUser({...me, uid: AUTH.getAccountId()});
               });
             });
 
-            DB.getDocStore(         
-              "three0.tweeterdemo.connections"
-            ).then(db => {
+            DB.getDocStore(env.connectionsDB).then(db => {
               db.add({
                 followerID: AUTH.getAccountId(),
                 followeeID: AUTH.getAccountId(),

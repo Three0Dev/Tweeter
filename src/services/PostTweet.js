@@ -1,4 +1,5 @@
-import { DB } from 'three0-js-sdk';
+import * as DB from 'three0-js-sdk/database';
+import { env } from '../env';
 
 const postTweet = async (
   authorId,
@@ -6,9 +7,7 @@ const postTweet = async (
   imgLink = null,
   parentTweet = null,
 ) => {
-  const db = await DB.getDocStore(
-    'three0.tweeterdemo.tweets',
-  );
+  const db = await DB.getDocStore(env.tweetsDB);
 
   const tweetObj = {
     authorId,

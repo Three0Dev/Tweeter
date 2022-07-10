@@ -8,7 +8,7 @@ import UserContext from "../../../context/UserContext";
 import Layout from "../../../layouts";
 import { fetchTweet } from "../../../services/FetchData";
 import { useRouter } from 'next/router'
-import {init} from 'three0-js-sdk';
+import init from 'three0-js-sdk';
 
 const config = {
   "contractName": "dev-1654358258368-10220982874835",
