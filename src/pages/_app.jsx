@@ -47,11 +47,10 @@ function MyApp({ Component, pageProps }) {
               profilePicture: `https://picsum.photos/seed/${AUTH.getAccountId()}/200`,
               bio: "",
             }
-            DB.getDocStore(env.usersDB).then(db => {
-              db.set(AUTH.getAccountId(), me).then(() => {
-                console.log('saved');
-                setUser({...me, uid: AUTH.getAccountId()});
-              });
+            
+            db.set(AUTH.getAccountId(), me).then(() => {
+              console.log('saved');
+              setUser({...me, uid: AUTH.getAccountId()});
             });
 
             DB.getDocStore(env.connectionsDB).then(db => {
