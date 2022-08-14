@@ -1,4 +1,4 @@
-import * as DB from 'three0-js-sdk/database';
+import * as DB from '@three0/js-sdk/database';
 import { deleteTweet } from './DeleteTweet';
 import env from '../env';
 

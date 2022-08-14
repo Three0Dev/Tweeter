@@ -6,9 +6,9 @@ import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
 import "../styles/global.css";
 import "../styles/reset.css";
-import init from 'three0-js-sdk';
-import * as AUTH from 'three0-js-sdk/auth';
-import * as DB from 'three0-js-sdk/database';
+import init from '@three0/js-sdk';
+import * as AUTH from '@three0/js-sdk/auth';
+import * as DB from '@three0/js-sdk/database';
 import env from "../env";
 
 function MyApp({ Component, pageProps }) {
