@@ -9,12 +9,7 @@ import Layout from "../../../layouts";
 import { fetchTweet } from "../../../services/FetchData";
 import { useRouter } from 'next/router'
 import init from 'three0-js-sdk';
-
-const config = {
-  "contractName": "dev-1654358258368-10220982874835",
-  "projectId": "project_0",
-  "chainType": "NEAR_TESTNET",
-};
+import { env } from "../../../env";
 
 const Tweet = () => {
   const { user } = useContext(UserContext);
@@ -23,14 +18,14 @@ const Tweet = () => {
   const router = useRouter()
   const { tweetId } = router.query
 
-  useEffect(() => {
-    init(config).then(() => {
-      fetchTweet(tweetId).then(tweetObj => {
-        console.log(tweetObj)
-        setTweet(tweetObj)
-      })
-   });
-  }, [router.pathname]);
+  init(env.three0Config).then(
+    useEffect(() => {
+        fetchTweet(tweetId).then(tweetObj => {
+          console.log(tweetObj)
+          setTweet(tweetObj)
+        })
+      }, [router.pathname])
+  );
 
   return !tweet ? (<div></div>) : (
     <div>

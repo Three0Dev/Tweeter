@@ -100,7 +100,7 @@ const Home = () => {
               ) : (
                 homeTweets.map((tweet) => (
                   <span key={tweet._id}>
-                    <Link href={`${tweet.author.username}/status/${tweet._id}`}>
+                    <Link href={`${tweet.authorId}/status/${tweet._id}`}>
                       <div className="mb-5">
                         <Post tweet={tweet} />
                       </div>

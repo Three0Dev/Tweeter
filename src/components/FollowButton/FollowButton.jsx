@@ -32,29 +32,34 @@ const FollowButton = ({ userID }) => {
   }
 
   const stopFollowing = () => {
+    console.log("stop following");
     if (!user) {
       alert("You need to sign in for that");
       return;
     }
 
     DB.getDocStore(env.connectionsDB).then(connectionsCollection => {
-      connectionsCollection.delete(connectionDocID).then(() => {
-        setIsFollowing(false);
-      }).catch(err => {
+      const result = connectionsCollection.where(doc => doc.followeeID == userID && doc.followerID == user.uid);
+      try {
+        for(let i=0; i < result.length; i++) {
+          connectionsCollection.delete(result[i]._id).then(() => {
+            setIsFollowing(false);
+          }).catch(err => {
+            console.log(err);
+          });
+        }
+      } catch (err) {
         console.log(err);
-      });
-    }).catch(err => {
-      console.log(err);
+      }
     });
-
-  };
+  }
 
   useEffect(() => {
     if (user) {
       async function checkFollowing() {
         const result = (await DB.getDocStore(env.connectionsDB)).where(doc => doc.followeeID == userID && doc.followerID == user.uid);
           
-        if (result.length === 1) {
+        if (result.length > 0) {
           setIsFollowing(true);
           // setFollowingDocID(result[0]._id);
         }

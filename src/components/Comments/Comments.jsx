@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import * as DB from 'three0-js-sdk/database';
 import { fetchUser } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
@@ -6,11 +7,14 @@ import { env } from "../../env";
 
 const Comments = ({ tweetID }) => {
   const [comments, setComments] = useState([]);
+  // console.log("getting comments")
 
   useEffect(() => {
     const getComments = async () => {
       try {
-        let tweets = (await DB.getDocStore(env.tweetsDB)).where(doc => doc.parentTweetID === tweetID);
+        const res = await DB.getDocStore(env.tweetsDB)
+
+        const tweets = res.where(doc => doc.parentTweet == tweetID);
         
         const localComments = [];
 
@@ -61,7 +65,7 @@ const Comments = ({ tweetID }) => {
                     <p className="font-noto text-gray-700">{comment.text}</p>
                   </div>
                 </div>
-                {/* <div className="flex flex-row py-4">
+                <div className="flex flex-row py-4">
                   <button type="submit">
                     <span>
                       <FavoriteBorderIcon />
@@ -72,7 +76,7 @@ const Comments = ({ tweetID }) => {
                   <p className="font-noto font-semibold text-gray-400">
                     12k Likes
                   </p>
-                </div> */}
+                </div>
               </div>
             </div>
           </div>

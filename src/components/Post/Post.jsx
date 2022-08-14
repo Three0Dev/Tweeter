@@ -25,7 +25,7 @@ const Post = ({ tweet }) => {
   const [isSaved, setIsSaved] = useState(false);
   const [saveDocID, setSaveDocID] = useState("");
 
-  const [comments, setComments] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
 
   const [myTweet, setMyTweet] = useState(false);
 
@@ -39,7 +39,7 @@ const Post = ({ tweet }) => {
 
     let id = await likesCollection.add({
       userID: user.uid,
-      tweetID: tweet.id,
+      tweetID: localTweet._id,
     });
 
     setLikes((prev) => prev + 1);
@@ -69,7 +69,7 @@ const Post = ({ tweet }) => {
 
     DB.getDocStore(env.savesDB).then(savesCollection => {
       savesCollection.add({
-        tweetID: tweet.id,
+        tweetID: localTweet._id,
         userID: user.uid,
       }).then((id) => {
         setSaves((prev) => prev + 1);
@@ -131,7 +131,7 @@ const Post = ({ tweet }) => {
         let res = await DB.getDocStore(env.tweetsDB)
 
         res = res.where(doc => doc.parentTweet == tweet._id);
-        setComments(res.length);
+        setCommentCount(res.length);
       }
 
       getCommentsCount();
@@ -204,7 +204,7 @@ const Post = ({ tweet }) => {
         )}
         <div className="flex flex-row justify-end my-5">
           <p className="mx-1 text-gray-500 font-noto font-medium">
-            {comments} Comments
+            {commentCount} Comments
           </p>
           <p className="mx-1 text-gray-500 font-noto font-medium">
             {likes} Likes
