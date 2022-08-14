@@ -3,7 +3,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import * as DB from 'three0-js-sdk/database';
 import { fetchUser } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
-import { env } from "../../env";
+import env from "../../env";
 
 const Comments = ({ tweetID }) => {
   const [comments, setComments] = useState([]);

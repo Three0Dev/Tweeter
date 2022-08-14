@@ -8,7 +8,7 @@ import ExploreTweetsContext from "../context/ExploreTweetsContext";
 import * as DB from 'three0-js-sdk/database';
 import Layout from "../layouts";
 import { fetchUser } from "../services/FetchData";
-import { env } from "../env";
+import env from "../env";
 
 const Explore = () => {
   const [exploreTweets, setExploreTweets] = useState([]);

@@ -9,7 +9,7 @@ import UserContext from "../context/UserContext";
 import * as DB from 'three0-js-sdk/database';
 import Layout from "../layouts";
 import { fetchTweet } from "../services/FetchData";
-import { env } from "../env";
+import env from "../env";
 
 const Bookmarks = () => {
   const { user } = useContext(UserContext);

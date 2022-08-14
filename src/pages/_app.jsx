@@ -9,7 +9,7 @@ import "../styles/reset.css";
 import init from 'three0-js-sdk';
 import * as AUTH from 'three0-js-sdk/auth';
 import * as DB from 'three0-js-sdk/database';
-import { env } from "../env";
+import env from "../env";
 
 function MyApp({ Component, pageProps }) {
   const Router = useRouter();

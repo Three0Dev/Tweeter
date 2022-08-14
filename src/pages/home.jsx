@@ -12,7 +12,7 @@ import * as DB from 'three0-js-sdk/database';
 import * as AUTH from 'three0-js-sdk/auth';
 import Layout from "../layouts";
 import { fetchUser } from "../services/FetchData";
-import { env } from "../env";
+import env from "../env";
 
 const Home = () => {
   const { user } = useContext(UserContext);

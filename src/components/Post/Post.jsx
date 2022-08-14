@@ -11,7 +11,7 @@ import * as DB from 'three0-js-sdk/database';
 import { deleteTweet } from "../../services/DeleteTweet";
 import { fetchTweetLikes, fetchTweetSaves } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
-import { env } from "../../env";
+import env from "../../env";
 
 const Post = ({ tweet }) => {
   const { user } = useContext(UserContext);

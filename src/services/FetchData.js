@@ -1,5 +1,5 @@
 import * as DB from 'three0-js-sdk/database';
-import { env } from '../env';
+import env from '../env';
 
 export const fetchNumUsers = async () => {
   const users = await DB.getDocStore(env.usersDB);

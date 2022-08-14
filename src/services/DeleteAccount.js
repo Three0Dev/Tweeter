@@ -1,6 +1,6 @@
 import * as DB from 'three0-js-sdk/database';
 import { deleteTweet } from './DeleteTweet';
-import { env } from '../env';
+import env from '../env';
 
 export const deleteAccount = async (userID) => {
   // Delete user doc from "users" collection

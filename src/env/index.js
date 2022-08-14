@@ -1,6 +1,9 @@
-export const env = {
+const env = {
   // NOTE: Replace with your own project configuration
   three0Config: {
+    contractName: '',
+    projectId: '',
+    chainType: '',
   },
   // NOTE: Add your own docstore databases here
   usersDB: '',
@@ -9,3 +12,5 @@ export const env = {
   likesDB: '',
   savesDB: '',
 };
+
+export default env;
