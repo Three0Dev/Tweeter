@@ -1,4 +1,4 @@
-import * as DB from '@three0/js-sdk/database';
+import * as DB from '@three0dev/js-sdk/database';
 import env from '../env';
 
 export const deleteTweet = (tweetID) => {

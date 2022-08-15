@@ -1,4 +1,4 @@
-import * as AUTH from '@three0/js-sdk/auth';
+import * as AUTH from '@three0dev/js-sdk/auth';
 
 async function handleSignIn() {
   await AUTH.login(

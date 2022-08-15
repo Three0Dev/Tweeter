@@ -6,7 +6,7 @@ import Filters from "../components/Filters/Filters";
 import Post from "../components/Post/Post";
 import BookmarksTweetsContext from "../context/BookmarksTweetsContext";
 import UserContext from "../context/UserContext";
-import * as DB from '@three0/js-sdk/database';
+import * as DB from '@three0dev/js-sdk/database';
 import Layout from "../layouts";
 import { fetchTweet } from "../services/FetchData";
 import env from "../env";
