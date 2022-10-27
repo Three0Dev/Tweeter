@@ -25,7 +25,7 @@ const Bookmarks = () => {
       if (!bookmarksTweetsContext) {
         async function getSavedTweets() {
           const localBMTweets = [];
-          let savesSnapShot = await DB.getDocStore(env.savesDB)
+          let savesSnapShot = await DB.DocStore(env.savesDB)
           
           savesSnapShot = savesSnapShot.where(doc => doc.userID === user.uid);
 

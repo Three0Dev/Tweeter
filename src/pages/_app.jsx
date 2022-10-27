@@ -6,9 +6,7 @@ import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
 import "../styles/global.css";
 import "../styles/reset.css";
-import init from '@three0dev/js-sdk';
-import * as AUTH from '@three0dev/js-sdk/auth';
-import * as DB from '@three0dev/js-sdk/database';
+import {init, Database as DB, Auth as AUTH} from '@three0dev/js-sdk';
 import env from "../env";
 
 function MyApp({ Component, pageProps }) {
@@ -28,7 +26,7 @@ function MyApp({ Component, pageProps }) {
         if (protectedRoutes.includes(Router.pathname)) Router.push("/");
         setUser(null);
       } else {
-        DB.getDocStore(env.usersDB).then(db => {
+        DB.DocStore(env.usersDB).then(db => {
           const data = db.get(AUTH.getAccountId());
 
           if(data) {
@@ -53,7 +51,7 @@ function MyApp({ Component, pageProps }) {
               setUser({...me, uid: AUTH.getAccountId()});
             });
 
-            DB.getDocStore(env.connectionsDB).then(db => {
+            DB.DocStore(env.connectionsDB).then(db => {
               db.add({
                 followerID: AUTH.getAccountId(),
                 followeeID: AUTH.getAccountId(),

@@ -1,4 +1,4 @@
-import * as DB from '@three0dev/js-sdk/database';
+import {Database as DB} from '@three0dev/js-sdk';
 import env from '../env';
 
 const postTweet = async (
@@ -7,7 +7,7 @@ const postTweet = async (
   imgLink = null,
   parentTweet = null,
 ) => {
-  const db = await DB.getDocStore(env.tweetsDB);
+  const db = await DB.DocStore(env.tweetsDB);
 
   const tweetObj = {
     authorId,

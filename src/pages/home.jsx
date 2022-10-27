@@ -8,8 +8,7 @@ import Trends from "../components/Trends/Trends";
 import TweetInput from "../components/TweetInput/TweetInput";
 import HomeTweetsContext from "../context/HomeTweetsContext";
 import UserContext from "../context/UserContext";
-import * as DB from '@three0dev/js-sdk/database';
-import * as AUTH from '@three0dev/js-sdk/auth';
+import {Database as DB, Auth as AUTH} from '@three0dev/js-sdk';
 import Layout from "../layouts";
 import { fetchUser } from "../services/FetchData";
 import env from "../env";
@@ -30,7 +29,7 @@ const Home = () => {
       if (user) {
         if (!homeTweetsContext) {
           setLoading(true);
-          let connectionsRef = await DB.getDocStore(env.connectionsDB)
+          let connectionsRef = await DB.DocStore(env.connectionsDB)
 
           connectionsRef = connectionsRef.where(doc => doc.followerID === user.uid);
 
@@ -41,7 +40,7 @@ const Home = () => {
           } else {
             const followerIDs = connectionsRef.map((connection) => connection.followeeID);
 
-            let tweetRef = await DB.getDocStore(env.tweetsDB)
+            let tweetRef = await DB.DocStore(env.tweetsDB)
             
             tweetRef = tweetRef.where(doc => followerIDs.includes(doc.authorId) && doc.parentTweet == null)
               .sort((a, b) => b.createdAt - a.createdAt);

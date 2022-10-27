@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import * as DB from '@three0dev/js-sdk/database';
+import {Database as DB} from '@three0dev/js-sdk';
 import { fetchUser } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
 import env from "../../env";
@@ -12,7 +12,7 @@ const Comments = ({ tweetID }) => {
   useEffect(() => {
     const getComments = async () => {
       try {
-        const res = await DB.getDocStore(env.tweetsDB)
+        const res = await DB.DocStore(env.tweetsDB)
 
         const tweets = res.where(doc => doc.parentTweet == tweetID);
         

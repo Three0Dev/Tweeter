@@ -7,7 +7,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import * as DB from '@three0dev/js-sdk/database';
+import {Database as DB} from '@three0dev/js-sdk';
 import { deleteTweet } from "../../services/DeleteTweet";
 import { fetchTweetLikes, fetchTweetSaves } from "../../services/FetchData";
 import Avatar from "../Avatar/Avatar";
@@ -35,7 +35,7 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    const likesCollection = await DB.getDocStore(env.likesDB);
+    const likesCollection = await DB.DocStore(env.likesDB);
 
     let id = await likesCollection.add({
       userID: user.uid,
@@ -53,7 +53,7 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    DB.getDocStore(env.likesDB).then(likesCollection => {
+    DB.DocStore(env.likesDB).then(likesCollection => {
       likesCollection.delete(likeDocID).then(() => {
         setLikes((prev) => prev - 1);
         setIsLiked(false);
@@ -67,7 +67,7 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    DB.getDocStore(env.savesDB).then(savesCollection => {
+    DB.DocStore(env.savesDB).then(savesCollection => {
       savesCollection.add({
         tweetID: localTweet._id,
         userID: user.uid,
@@ -85,7 +85,7 @@ const Post = ({ tweet }) => {
       return;
     }
 
-    DB.getDocStore(env.savesDB).then(savesCollection => {
+    DB.DocStore(env.savesDB).then(savesCollection => {
       savesCollection.delete(
         saveDocID
       ).then(() => {
@@ -104,7 +104,7 @@ const Post = ({ tweet }) => {
       }
 
       async function checkForLikes() {
-        let docs = await DB.getDocStore(env.likesDB)
+        let docs = await DB.DocStore(env.likesDB)
         
         docs = docs.where(isValidTweet);
 
@@ -116,7 +116,7 @@ const Post = ({ tweet }) => {
       checkForLikes();
 
       async function checkForSaves() {
-        let docs = await DB.getDocStore(env.savesDB)
+        let docs = await DB.DocStore(env.savesDB)
         
         docs = docs.where(isValidTweet);
 
@@ -128,7 +128,7 @@ const Post = ({ tweet }) => {
       checkForSaves();
 
       async function getCommentsCount() {
-        let res = await DB.getDocStore(env.tweetsDB)
+        let res = await DB.DocStore(env.tweetsDB)
 
         res = res.where(doc => doc.parentTweet == tweet._id);
         setCommentCount(res.length);

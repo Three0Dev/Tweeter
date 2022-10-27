@@ -1,13 +1,13 @@
-import * as DB from '@three0dev/js-sdk/database';
+import {Database as DB} from '@three0dev/js-sdk';
 import env from '../env';
 
 export const fetchNumUsers = async () => {
-  const users = await DB.getDocStore(env.usersDB);
+  const users = await DB.DocStore(env.usersDB);
   return users.get().length;
 };
 
 export const fetchUser = async ({ username, userID }) => {
-  const userQuerySnapShot = await DB.getDocStore(env.usersDB);
+  const userQuerySnapShot = await DB.DocStore(env.usersDB);
 
   if (username) {
     const userSnapshot = userQuerySnapShot.where((doc) => doc.username === username);
@@ -38,7 +38,7 @@ export const fetchUser = async ({ username, userID }) => {
 };
 
 export const fetchUserTweets = async (userID) => {
-  let tweetsQuerySnapShot = await DB.getDocStore(env.tweetsDB);
+  let tweetsQuerySnapShot = await DB.DocStore(env.tweetsDB);
 
   tweetsQuerySnapShot = tweetsQuerySnapShot.where((doc) => doc.authorId === userID && doc.parentTweet == null);
 
@@ -61,7 +61,7 @@ export const fetchUserTweets = async (userID) => {
 
 export const fetchTweet = async (tweetID) => {
   const tweetRef = await DB
-    .getDocStore(env.tweetsDB);
+    .DocStore(env.tweetsDB);
 
   const tweet = tweetRef.get(tweetID);
   const user = await fetchUser({ userID: tweet.authorId });
@@ -75,25 +75,25 @@ export const fetchTweet = async (tweetID) => {
 };
 
 export const fetchUserFollowers = async (userID) => {
-  const db = await DB.getDocStore(env.connectionsDB);
+  const db = await DB.DocStore(env.connectionsDB);
 
   return db.where((doc) => doc.followeeID === userID);
 };
 
 export const fetchUserFollowings = async (userID) => {
-  const db = await DB.getDocStore(env.connectionsDB);
+  const db = await DB.DocStore(env.connectionsDB);
 
   return db.where((doc) => doc.followerID === userID);
 };
 
 export const fetchTweetLikes = async (tweetID) => {
-  const db = await DB.getDocStore(env.likesDB);
+  const db = await DB.DocStore(env.likesDB);
 
   return db.where((doc) => doc.tweetID === tweetID);
 };
 
 export const fetchTweetSaves = async (tweetID) => {
-  const db = await DB.getDocStore(env.savesDB);
+  const db = await DB.DocStore(env.savesDB);
   return db.where((doc) => doc.tweetID === tweetID);
 };
 

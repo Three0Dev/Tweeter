@@ -1,7 +1,7 @@
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import * as DB from '@three0dev/js-sdk/database';
+import { Database as DB} from '@three0dev/js-sdk';
 import env from "../../env";
 
 const FollowButton = ({ userID }) => {
@@ -15,7 +15,7 @@ const FollowButton = ({ userID }) => {
       return;
     }
 
-    DB.getDocStore(env.connectionsDB).then(connectionsCollection => {
+    DB.DocStore(env.connectionsDB).then(connectionsCollection => {
       connectionsCollection.add({
         followerID: user.uid,
         followeeID: userID,
@@ -38,7 +38,7 @@ const FollowButton = ({ userID }) => {
       return;
     }
 
-    DB.getDocStore(env.connectionsDB).then(connectionsCollection => {
+    DB.DocStore(env.connectionsDB).then(connectionsCollection => {
       const result = connectionsCollection.where(doc => doc.followeeID == userID && doc.followerID == user.uid);
       try {
         for(let i=0; i < result.length; i++) {
@@ -57,7 +57,7 @@ const FollowButton = ({ userID }) => {
   useEffect(() => {
     if (user) {
       async function checkFollowing() {
-        const result = (await DB.getDocStore(env.connectionsDB)).where(doc => doc.followeeID == userID && doc.followerID == user.uid);
+        const result = (await DB.DocStore(env.connectionsDB)).where(doc => doc.followeeID == userID && doc.followerID == user.uid);
           
         if (result.length > 0) {
           setIsFollowing(true);

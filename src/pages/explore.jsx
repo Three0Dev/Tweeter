@@ -19,7 +19,7 @@ const Explore = () => {
   useEffect(() => {
     async function fetchExploreTweets() {
     if (!exploreTweetsContext) {
-      let tweetRef = await DB.getDocStore(env.tweetsDB)
+      let tweetRef = await DB.DocStore(env.tweetsDB)
       
       tweetRef = tweetRef.where(doc => doc.parentTweet == null);
       
